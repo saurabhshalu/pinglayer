@@ -1,0 +1,48 @@
+import React from 'react';
+import { cn } from '../../lib/utils';
+
+export const Skeleton: React.FC<{ className?: string }> = ({ className }) => {
+  return (
+    <div
+      className={cn('animate-pulse rounded-lg bg-slate-800/60', className)}
+    />
+  );
+};
+
+export const TableSkeleton: React.FC<{ rows?: number; columns?: number }> = ({
+  rows = 5,
+  columns = 5,
+}) => {
+  return (
+    <div className="w-full space-y-3 p-4">
+      {/* Header skeleton */}
+      <div className="flex gap-4 pb-3 border-b border-slate-800">
+        {Array.from({ length: columns }).map((_, i) => (
+          <Skeleton key={i} className="h-4 flex-1" />
+        ))}
+      </div>
+      {/* Rows skeleton */}
+      {Array.from({ length: rows }).map((_, i) => (
+        <div key={i} className="flex gap-4 py-2.5 items-center">
+          {Array.from({ length: columns }).map((_, j) => (
+            <Skeleton key={j} className="h-5 flex-1" />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export const CardSkeleton: React.FC<{ count?: number }> = ({ count = 3 }) => {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="p-5 rounded-2xl border border-slate-800 bg-slate-900/50 space-y-3">
+          <Skeleton className="h-4 w-1/3" />
+          <Skeleton className="h-8 w-2/3" />
+          <Skeleton className="h-3 w-1/2" />
+        </div>
+      ))}
+    </div>
+  );
+};

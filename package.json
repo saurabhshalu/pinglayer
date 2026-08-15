@@ -15,7 +15,10 @@
     "test:integration": "jest --testPathPattern=tests/integration --runInBand",
     "test:coverage": "jest --coverage --runInBand",
     "lint": "eslint src/**/*.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "frontend": "npm --prefix frontend run dev",
+    "frontend:build": "npm --prefix frontend run build",
+    "frontend:preview": "npm --prefix frontend run preview"
   },
   "dependencies": {
     "express": "^4.18.2",
