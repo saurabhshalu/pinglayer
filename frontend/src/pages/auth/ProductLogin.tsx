@@ -29,8 +29,9 @@ export const ProductLogin: React.FC = () => {
       toast.success('Workspace Authenticated', 'Signed into your Product Workspace');
       navigate('/connections');
     } catch (err: any) {
-      setError(err?.message || 'Invalid or revoked API Key. Please verify your product key.');
-      toast.error('Authentication Failed', 'Invalid Product API Key');
+      const errorMsg = err?.error?.message || err?.message || 'Invalid or revoked API Key. Please verify your product key.';
+      setError(errorMsg);
+      toast.error('Authentication Failed', errorMsg);
     } finally {
       setLoading(false);
     }

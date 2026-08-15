@@ -18,7 +18,6 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { SendTestNotificationModal } from '../modals/SendTestNotificationModal';
-import { Toaster } from '../ui/sonner';
 import { Button } from '../ui/button';
 
 export const AppLayout: React.FC = () => {
@@ -50,8 +49,6 @@ export const AppLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col md:flex-row text-slate-100 font-sans">
-      <Toaster />
-
       {/* ─── Mobile Header ──────────────────────────────────────────────────────── */}
       <div className="md:hidden flex items-center justify-between px-4 py-3 bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-40">
         <div className="flex items-center gap-2.5">

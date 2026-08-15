@@ -29,8 +29,9 @@ export const AdminLogin: React.FC = () => {
       toast.success('Admin Authenticated', 'Welcome to PingLayer Admin Console');
       navigate('/admin/products');
     } catch (err: any) {
-      setError(err?.message || 'Invalid Admin Secret. Please check your credentials.');
-      toast.error('Authentication Failed', 'Invalid Admin Secret');
+      const errorMsg = err?.error?.message || err?.message || 'Invalid Admin Secret. Please check your credentials.';
+      setError(errorMsg);
+      toast.error('Authentication Failed', errorMsg);
     } finally {
       setLoading(false);
     }

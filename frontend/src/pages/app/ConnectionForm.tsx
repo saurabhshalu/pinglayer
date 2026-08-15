@@ -112,8 +112,13 @@ export const ConnectionForm: React.FC = () => {
         if (phoneNumberId.trim()) credentialsUpdate['phone_number_id'] = phoneNumberId.trim();
         if (accessToken.trim()) credentialsUpdate['access_token'] = accessToken.trim();
 
+        const configUpdate: Record<string, unknown> = {};
+        if (wabaId.trim()) configUpdate['waba_id'] = wabaId.trim();
+        if (phoneNumberId.trim()) configUpdate['phone_number_id'] = phoneNumberId.trim();
+
         await connectionsApi.updateConnection(id, {
           credentials: Object.keys(credentialsUpdate).length > 0 ? credentialsUpdate : undefined,
+          config: Object.keys(configUpdate).length > 0 ? configUpdate : undefined,
           status,
         });
 
