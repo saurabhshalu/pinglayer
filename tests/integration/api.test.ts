@@ -14,7 +14,9 @@ if (!SKIP_DB) {
   app = require('../../src/app').createApp();
 }
 
-describe.skipIf(SKIP_DB)('Integration: Health endpoint', () => {
+const describeWithDb = SKIP_DB ? describe.skip : describe;
+
+describeWithDb('Integration: Health endpoint', () => {
   it('GET /health returns ok', async () => {
     const res = await request(app).get('/health');
     expect(res.status).toBe(200);

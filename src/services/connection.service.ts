@@ -112,14 +112,29 @@ export async function updateConnection(
 ): Promise<Connection> {
   const connection = await getConnection(id, productId);
 
-  if (input.credentials) {
-    const encrypted = encryptCredentials(input.credentials);
+  if (input.credentials && Object.keys(input.credentials).length > 0) {
+    const existingPayload = await connectionRepo.getCredentials(id);
+    let mergedCredentials = { ...input.credentials };
+    if (existingPayload) {
+      try {
+        const existingCreds = decryptCredentials(existingPayload);
+        mergedCredentials = { ...existingCreds, ...input.credentials };
+      } catch (err) {
+        logger.warn('Failed to decrypt existing credentials during update, replacing with new credentials', {
+          connectionId: id,
+          err,
+        });
+      }
+    }
+    const encrypted = encryptCredentials(mergedCredentials);
     await connectionRepo.updateCredentials(id, encrypted);
   }
 
   const updates: Partial<Pick<Connection, 'status' | 'config'>> = {};
   if (input.status !== undefined) updates.status = input.status;
-  if (input.config !== undefined) updates.config = input.config;
+  if (input.config !== undefined) {
+    updates.config = { ...(connection.config || {}), ...input.config };
+  }
 
   if (Object.keys(updates).length > 0) {
     await connectionRepo.updateConnection(id, updates);

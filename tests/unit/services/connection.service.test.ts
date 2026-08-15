@@ -1,6 +1,6 @@
 import * as connectionRepo from '../../../src/repositories/connection.repository';
 import * as credentials from '../../../src/crypto/credentials';
-import { createConnection, getConnection, validateConnection } from '../../../src/services/connection.service';
+import { createConnection, getConnection, validateConnection, updateConnection } from '../../../src/services/connection.service';
 import { getProvider } from '../../../src/providers/registry';
 import {
   Channel,
@@ -123,6 +123,45 @@ describe('connection.service', () => {
       const result = await validateConnection('conn-1', 'prod-1');
       expect(result.valid).toBe(false);
       expect(mockConnRepo.updateConnection).toHaveBeenCalledWith('conn-1', { status: ConnectionStatus.Invalid });
+    });
+  });
+
+  describe('updateConnection', () => {
+    it('merges new partial credentials with existing decrypted credentials', async () => {
+      mockConnRepo.findById.mockResolvedValue(fakeConnection);
+      mockConnRepo.getCredentials.mockResolvedValue({ iv: 'iv', tag: 'tag', data: 'enc' });
+      mockCrypto.decryptCredentials.mockReturnValue({
+        access_token: 'existing_token_secret',
+        phone_number_id: 'old_pnid',
+        waba_id: 'old_waba',
+      });
+      mockCrypto.encryptCredentials.mockReturnValue({ iv: 'iv2', tag: 'tag2', data: 'enc2' });
+      mockConnRepo.updateCredentials.mockResolvedValue(undefined);
+      mockConnRepo.updateConnection.mockResolvedValue(undefined);
+
+      // User updates only waba_id and phone_number_id, omitting access_token
+      await updateConnection('conn-1', 'prod-1', {
+        credentials: {
+          waba_id: 'new_waba_123',
+          phone_number_id: 'new_pnid_456',
+        },
+        config: {
+          waba_id: 'new_waba_123',
+          phone_number_id: 'new_pnid_456',
+        },
+      });
+
+      // Assert that encryptCredentials was called with the merged credentials including the existing access_token
+      expect(mockCrypto.encryptCredentials).toHaveBeenCalledWith({
+        access_token: 'existing_token_secret',
+        phone_number_id: 'new_pnid_456',
+        waba_id: 'new_waba_123',
+      });
+      expect(mockConnRepo.updateCredentials).toHaveBeenCalledWith('conn-1', {
+        iv: 'iv2',
+        tag: 'tag2',
+        data: 'enc2',
+      });
     });
   });
 });
