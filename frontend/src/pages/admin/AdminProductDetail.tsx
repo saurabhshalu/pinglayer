@@ -168,15 +168,15 @@ export const AdminProductDetail: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2.5">
-              <h2 className="text-2xl font-bold tracking-tight text-white">{product.name}</h2>
+              <h2 className="text-2xl font-bold tracking-tight text-[#F8EDE3]">{product.name}</h2>
               <StatusBadge status={product.status} type="product" />
             </div>
-            <p className="font-mono text-xs text-indigo-400">slug: {product.slug}</p>
+            <p className="font-mono text-xs text-[#BDD2B6]">slug: {product.slug}</p>
           </div>
 
           {/* Status Dropdown */}
           <div className="flex items-center gap-2.5 w-44">
-            <span className="text-xs text-slate-400 font-medium whitespace-nowrap">Status:</span>
+            <span className="text-xs text-[#A2B29F] font-medium whitespace-nowrap">Status:</span>
             <Select
               value={product.status}
               disabled={statusUpdating}
@@ -194,18 +194,18 @@ export const AdminProductDetail: React.FC = () => {
           </div>
         </div>
 
-        <div className="pt-4 border-t border-slate-800/80 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-slate-400">
+        <div className="pt-4 border-t border-slate-800/80 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-[#A2B29F]">
           <div className="flex items-center gap-2">
-            <Layers className="w-4 h-4 text-slate-500" />
+            <Layers className="w-4 h-4 text-[#A2B29F]" />
             <span>ID: <span className="font-mono text-slate-300">{product.id}</span></span>
           </div>
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-slate-500" />
+            <Calendar className="w-4 h-4 text-[#A2B29F]" />
             <span>Created: <span className="text-slate-300">{formatDate(product.created_at)}</span></span>
           </div>
           <div className="flex items-center gap-2">
-            <KeyRound className="w-4 h-4 text-indigo-400" />
-            <span>API Keys: <span className="text-slate-300 font-semibold">{apiKeys.length}</span></span>
+            <KeyRound className="w-4 h-4 text-[#BDD2B6]" />
+            <span>API Keys: <span className="text-[#F8EDE3] font-semibold">{apiKeys.length}</span></span>
           </div>
         </div>
       </Card>
@@ -214,11 +214,11 @@ export const AdminProductDetail: React.FC = () => {
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-              <KeyRound className="w-4 h-4 text-indigo-400" />
+            <h3 className="text-base font-bold text-[#F8EDE3] flex items-center gap-2">
+              <KeyRound className="w-4 h-4 text-[#BDD2B6]" />
               <span>Product API Keys</span>
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-[#A2B29F] mt-0.5">
               These keys allow SaaS backends or users to authenticate against PingLayer.
             </p>
           </div>
@@ -247,7 +247,7 @@ export const AdminProductDetail: React.FC = () => {
         <Card className="overflow-hidden p-0">
           {apiKeys.length === 0 ? (
             <EmptyState
-              icon={<KeyRound className="w-8 h-8 text-indigo-400" />}
+              icon={<KeyRound className="w-8 h-8 text-[#BDD2B6]" />}
               title="No API keys generated yet"
               description="Generate an API key for this product so the SaaS team can authenticate and manage notifications."
               action={{
@@ -275,9 +275,9 @@ export const AdminProductDetail: React.FC = () => {
                     {apiKeys.map((key) => {
                       const isRevoked = key.status === 'revoked' || Boolean((key as any).revoked_at);
                       return (
-                        <tr key={key.id} className="hover:bg-slate-800/30 transition-colors">
-                          <td className="py-3.5 px-4 font-mono font-semibold text-emerald-400 flex items-center gap-1.5">
-                            <span>{key.key_prefix}••••••••</span>
+                        <tr key={key.id} className="hover:bg-slate-800/20 transition-colors">
+                          <td className="py-3.5 px-4 font-mono text-emerald-400 font-bold text-xs">
+                            {key.key_prefix}••••••••
                           </td>
                           <td className="py-3.5 px-4">
                             <StatusBadge status={key.status} type="apikey" />
@@ -298,7 +298,7 @@ export const AdminProductDetail: React.FC = () => {
                                 size="sm"
                                 disabled={isRevoked}
                                 onClick={() => setRotateKeyId(key.id)}
-                                className="inline-flex items-center gap-1 text-indigo-300 disabled:opacity-40 disabled:cursor-not-allowed"
+                                className="inline-flex items-center gap-1 text-[#BDD2B6] disabled:opacity-40 disabled:cursor-not-allowed"
                                 title={isRevoked ? 'Key is already revoked' : 'Rotate Key'}
                               >
                                 <RotateCw className="w-3.5 h-3.5" />
@@ -354,7 +354,7 @@ export const AdminProductDetail: React.FC = () => {
                           size="sm"
                           disabled={isRevoked}
                           onClick={() => setRotateKeyId(key.id)}
-                          className="inline-flex items-center gap-1 text-indigo-300 text-xs disabled:opacity-40 disabled:cursor-not-allowed"
+                          className="inline-flex items-center gap-1 text-[#BDD2B6] text-xs disabled:opacity-40 disabled:cursor-not-allowed"
                           title={isRevoked ? 'Key is already revoked' : 'Rotate Key'}
                         >
                           <RotateCw className="w-3.5 h-3.5" />
@@ -390,8 +390,8 @@ export const AdminProductDetail: React.FC = () => {
         }}
         title={
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-indigo-400" />
-            <span className="text-base font-bold text-slate-100">Product API Key Generated</span>
+            <Sparkles className="w-5 h-5 text-[#BDD2B6]" />
+            <span className="text-base font-bold text-[#F8EDE3]">Product API Key Generated</span>
           </div>
         }
         description="Provide this key to your SaaS development team or use it to sign in as a product user."

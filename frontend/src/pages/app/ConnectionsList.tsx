@@ -127,7 +127,7 @@ export const ConnectionsList: React.FC = () => {
       case Channel.Sms:
         return <MessageSquare className="w-3.5 h-3.5 text-amber-400" />;
       default:
-        return <Link2 className="w-3.5 h-3.5 text-indigo-400" />;
+        return <Link2 className="w-3.5 h-3.5 text-[#BDD2B6]" />;
     }
   };
 
@@ -136,11 +136,11 @@ export const ConnectionsList: React.FC = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <Link2 className="w-5 h-5 text-indigo-400" />
+          <h2 className="text-xl font-bold tracking-tight text-[#F8EDE3] flex items-center gap-2.5">
+            <Link2 className="w-5 h-5 text-[#BDD2B6]" />
             <span>Tenant Connections</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#A2B29F] mt-1">
             Configure WhatsApp (Meta) and messaging channel credentials for your SaaS tenants.
           </p>
         </div>
@@ -170,7 +170,7 @@ export const ConnectionsList: React.FC = () => {
           <TableSkeleton rows={5} columns={6} />
         ) : connections.length === 0 ? (
           <EmptyState
-            icon={<Link2 className="w-8 h-8 text-indigo-400" />}
+            icon={<Link2 className="w-8 h-8 text-[#BDD2B6]" />}
             title="No connections yet"
             description="Add your first tenant connection to configure WhatsApp credentials."
             action={{
@@ -201,22 +201,22 @@ export const ConnectionsList: React.FC = () => {
                       <td className="py-3.5 px-4">
                         <TenantDisplay
                           tenantId={conn.tenant_id}
-                          tenantName={(conn.config as any)?.tenant_name}
+                          tenantName={(conn as any).tenant_name || (conn.config as any)?.tenant_name}
                         />
                       </td>
                       <td className="py-3.5 px-4">
-                        <div className="inline-flex items-center gap-1.5 capitalize font-medium">
+                        <div className="inline-flex items-center gap-1.5 capitalize font-medium text-slate-200">
                           {getChannelIcon(conn.channel)}
                           <span>{conn.channel}</span>
                         </div>
                       </td>
-                      <td className="py-3.5 px-4 capitalize text-slate-300">
+                      <td className="py-3.5 px-4 font-medium text-slate-300 uppercase text-[11px]">
                         {conn.provider}
                       </td>
                       <td className="py-3.5 px-4">
                         <StatusBadge status={conn.status} type="connection" />
                       </td>
-                      <td className="py-3.5 px-4 font-mono text-slate-400">
+                      <td className="py-3.5 px-4 font-mono text-slate-400 text-[11px]">
                         {conn.auth_method}
                       </td>
                       <td className="py-3.5 px-4 text-slate-400">
@@ -229,13 +229,13 @@ export const ConnectionsList: React.FC = () => {
                             size="sm"
                             disabled={testingId === conn.id}
                             onClick={() => handleTestConnection(conn)}
-                            className="inline-flex items-center gap-1 text-indigo-300"
+                            className="inline-flex items-center gap-1 text-[#BDD2B6]"
                             title="Live Status Test"
                           >
                             {testingId === conn.id ? (
-                              <RefreshCw className="w-3 h-3 animate-spin text-indigo-400" />
+                              <RefreshCw className="w-3 h-3 animate-spin text-[#BDD2B6]" />
                             ) : (
-                              <Activity className="w-3 h-3 text-indigo-400" />
+                              <Activity className="w-3 h-3 text-[#BDD2B6]" />
                             )}
                             <span>Test</span>
                           </Button>
@@ -275,7 +275,7 @@ export const ConnectionsList: React.FC = () => {
                     <div className="min-w-0 flex-1">
                       <TenantDisplay
                         tenantId={conn.tenant_id}
-                        tenantName={(conn.config as any)?.tenant_name}
+                        tenantName={(conn as any).tenant_name || (conn.config as any)?.tenant_name}
                       />
                       <div className="inline-flex items-center gap-1.5 capitalize text-xs text-slate-300 mt-1">
                         {getChannelIcon(conn.channel)}
@@ -296,12 +296,12 @@ export const ConnectionsList: React.FC = () => {
                       size="sm"
                       disabled={testingId === conn.id}
                       onClick={() => handleTestConnection(conn)}
-                      className="inline-flex items-center gap-1 text-indigo-300 text-xs"
+                      className="inline-flex items-center gap-1 text-[#BDD2B6] text-xs"
                     >
                       {testingId === conn.id ? (
-                        <RefreshCw className="w-3 h-3 animate-spin text-indigo-400" />
+                        <RefreshCw className="w-3 h-3 animate-spin text-[#BDD2B6]" />
                       ) : (
-                        <Activity className="w-3 h-3 text-indigo-400" />
+                        <Activity className="w-3 h-3 text-[#BDD2B6]" />
                       )}
                       <span>Test</span>
                     </Button>

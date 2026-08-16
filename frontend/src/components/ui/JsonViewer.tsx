@@ -39,7 +39,7 @@ export const JsonViewer: React.FC<JsonViewerProps> = ({
       >
         <div className="flex items-center gap-2 text-slate-300 font-medium min-w-0">
           {isOpen ? <ChevronDown className="w-3.5 h-3.5 flex-shrink-0" /> : <ChevronRight className="w-3.5 h-3.5 flex-shrink-0" />}
-          <Code className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
+          <Code className="w-3.5 h-3.5 text-[#BDD2B6] flex-shrink-0" />
           <span className="truncate">{title}</span>
         </div>
 
@@ -55,7 +55,7 @@ export const JsonViewer: React.FC<JsonViewerProps> = ({
 
       {isOpen && (
         <div className="p-3 sm:p-3.5 overflow-x-auto max-h-96 border-t border-slate-800/80 bg-slate-950 min-w-0 max-w-full">
-          <pre className="font-mono text-xs text-indigo-200/90 leading-relaxed break-all whitespace-pre-wrap max-w-full">
+          <pre className="font-mono text-xs text-[#F8EDE3]/90 leading-relaxed break-all whitespace-pre-wrap max-w-full">
             {jsonString}
           </pre>
         </div>

@@ -52,12 +52,12 @@ export const AppLayout: React.FC = () => {
       {/* ─── Mobile Header ──────────────────────────────────────────────────────── */}
       <div className="md:hidden flex items-center justify-between px-4 py-3 bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-40">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-md shadow-indigo-600/30">
-            <Radio className="w-4 h-4 text-white" />
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#798777] to-[#BDD2B6] flex items-center justify-center shadow-md shadow-[#798777]/30">
+            <Radio className="w-4 h-4 text-[#111511]" />
           </div>
           <div>
-            <span className="font-bold text-sm tracking-tight text-white">PingLayer</span>
-            <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-semibold uppercase">
+            <span className="font-bold text-sm tracking-tight text-[#F8EDE3]">PingLayer</span>
+            <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-[#798777]/25 text-[#BDD2B6] border border-[#A2B29F]/30 font-semibold uppercase">
               {role}
             </span>
           </div>
@@ -65,7 +65,7 @@ export const AppLayout: React.FC = () => {
         <button
           type="button"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 text-slate-400 hover:text-slate-200"
+          className="p-2 text-slate-400 hover:text-[#F8EDE3]"
         >
           {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
@@ -84,16 +84,16 @@ export const AppLayout: React.FC = () => {
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-600/30"
+                className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#798777] to-[#BDD2B6] flex items-center justify-center shadow-lg shadow-[#798777]/30"
               >
-                <Radio className="w-5 h-5 text-white" />
+                <Radio className="w-5 h-5 text-[#111511]" />
               </motion.div>
               <div>
-                <h1 className="font-bold text-base tracking-tight text-white flex items-center gap-1.5">
+                <h1 className="font-bold text-base tracking-tight text-[#F8EDE3] flex items-center gap-1.5">
                   PingLayer
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#BDD2B6] inline-block animate-pulse" />
                 </h1>
-                <p className="text-[11px] text-slate-400 font-medium">Notification Manager</p>
+                <p className="text-[11px] text-[#A2B29F] font-medium">Notification Manager</p>
               </div>
             </div>
           </div>
@@ -105,16 +105,16 @@ export const AppLayout: React.FC = () => {
                 className={`p-2 rounded-xl ${
                   role === 'admin'
                     ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
-                    : 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/30'
+                    : 'bg-[#798777]/20 text-[#BDD2B6] border border-[#A2B29F]/30'
                 }`}
               >
                 {role === 'admin' ? <Shield className="w-4 h-4" /> : <KeyRound className="w-4 h-4" />}
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-[#A2B29F]">
                   {role === 'admin' ? 'Platform Admin' : 'Product Workspace'}
                 </div>
-                <div className="text-xs font-mono text-slate-300 truncate font-medium">
+                <div className="text-xs font-mono text-[#F8EDE3] truncate font-medium">
                   {role === 'admin' ? 'Root Session' : `${apiKeyPrefix || 'key'}••••••••`}
                 </div>
               </div>
@@ -133,11 +133,11 @@ export const AppLayout: React.FC = () => {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
                     isActive
-                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-semibold'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                      ? 'bg-[#798777] text-[#F8EDE3] shadow-md shadow-[#798777]/30 font-semibold'
+                      : 'text-[#A2B29F] hover:text-[#F8EDE3] hover:bg-[#798777]/15'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-[#F8EDE3]' : 'text-[#A2B29F]'}`} />
                   <span>{item.label}</span>
                 </NavLink>
               );
@@ -152,9 +152,9 @@ export const AppLayout: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={() => setTestModalOpen(true)}
-              className="w-full flex items-center justify-center gap-2 border-indigo-500/30 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-300"
+              className="w-full flex items-center justify-center gap-2 border-[#A2B29F]/30 bg-[#798777]/15 hover:bg-[#798777]/25 text-[#BDD2B6]"
             >
-              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+              <Sparkles className="w-3.5 h-3.5 text-[#BDD2B6]" />
               <span>Test Dispatcher</span>
             </Button>
           )}

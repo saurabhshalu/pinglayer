@@ -40,12 +40,12 @@ export const ApiKeyDisplay: React.FC<ApiKeyDisplayProps> = ({
 
       {/* Key Box */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs text-slate-400">
+        <div className="flex items-center justify-between text-xs text-[#A2B29F]">
           <span>{prefix ? `Key Prefix: ${prefix}` : 'API Key'}</span>
           <button
             type="button"
             onClick={() => setIsRevealed(!isRevealed)}
-            className="inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-medium transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-[#BDD2B6] hover:text-[#F8EDE3] font-medium transition-colors cursor-pointer"
           >
             {isRevealed ? (
               <>
@@ -77,7 +77,7 @@ export const ApiKeyDisplay: React.FC<ApiKeyDisplayProps> = ({
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                 copied
                   ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                  : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm'
+                  : 'bg-[#798777] hover:bg-[#A2B29F] text-[#F8EDE3] shadow-sm font-semibold'
               }`}
             >
               {copied ? (
@@ -103,7 +103,7 @@ export const ApiKeyDisplay: React.FC<ApiKeyDisplayProps> = ({
             type="checkbox"
             checked={hasConfirmed}
             onChange={(e) => setHasConfirmed(e.target.checked)}
-            className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-950 transition-all cursor-pointer"
+            className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-[#798777] focus:ring-[#798777] focus:ring-offset-slate-950 transition-all cursor-pointer"
           />
           <span className="text-xs text-slate-300 group-hover:text-slate-100 transition-colors select-none">
             I have securely copied and saved this API key in a safe place

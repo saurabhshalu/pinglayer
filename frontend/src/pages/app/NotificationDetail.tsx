@@ -74,7 +74,7 @@ export const NotificationDetail: React.FC = () => {
       case Channel.Sms:
         return <MessageSquare className="w-4 h-4 text-amber-400" />;
       default:
-        return <Bell className="w-4 h-4 text-indigo-400" />;
+        return <Bell className="w-4 h-4 text-[#BDD2B6]" />;
     }
   };
 
@@ -215,8 +215,8 @@ export const NotificationDetail: React.FC = () => {
       {/* Delivery Attempts Table */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2">
-            <Clock className="w-4 h-4 text-indigo-400" />
+          <h3 className="text-sm font-bold text-[#F8EDE3] flex items-center gap-2">
+            <Clock className="w-4 h-4 text-[#BDD2B6]" />
             <span>Delivery Lifecycle & Attempts ({attempts.length})</span>
           </h3>
         </div>

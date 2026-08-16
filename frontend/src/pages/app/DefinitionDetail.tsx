@@ -245,12 +245,12 @@ export const DefinitionDetail: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2.5">
-              <span className="font-mono font-bold text-xl text-indigo-400">{definition.key}</span>
+              <span className="font-mono font-bold text-xl text-[#BDD2B6]">{definition.key}</span>
               <StatusBadge status={definition.status} type="generic" />
             </div>
-            <h3 className="text-sm font-semibold text-slate-200">{definition.name}</h3>
+            <h3 className="text-sm font-semibold text-[#F8EDE3]">{definition.name}</h3>
             {definition.description && (
-              <p className="text-xs text-slate-400 max-w-2xl mt-1">{definition.description}</p>
+              <p className="text-xs text-[#A2B29F] max-w-2xl mt-1">{definition.description}</p>
             )}
           </div>
 
@@ -260,14 +260,14 @@ export const DefinitionDetail: React.FC = () => {
                 key={ch}
                 className="px-2.5 py-1 rounded-full bg-slate-800 text-slate-200 border border-slate-700 text-xs font-semibold uppercase flex items-center gap-1"
               >
-                <Radio className="w-3 h-3 text-emerald-400" />
+                <Radio className="w-3 h-3 text-[#BDD2B6]" />
                 <span>{ch}</span>
               </span>
             ))}
           </div>
         </div>
 
-        <div className="pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs text-slate-400">
+        <div className="pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs text-[#A2B29F]">
           <span>Created: {formatDate(definition.created_at)}</span>
           <span>Mapped Connections: {mappings.length}</span>
         </div>
@@ -277,11 +277,11 @@ export const DefinitionDetail: React.FC = () => {
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-              <Layers className="w-4 h-4 text-indigo-400" />
+            <h3 className="text-base font-bold text-[#F8EDE3] flex items-center gap-2">
+              <Layers className="w-4 h-4 text-[#BDD2B6]" />
               <span>Template Mappings by Connection</span>
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-[#A2B29F] mt-0.5">
               Maps this event key to specific provider WhatsApp approved template names and parameters.
             </p>
           </div>
@@ -310,7 +310,7 @@ export const DefinitionDetail: React.FC = () => {
         <Card className="overflow-hidden p-0">
           {mappings.length === 0 ? (
             <EmptyState
-              icon={<Layers className="w-8 h-8 text-indigo-400" />}
+              icon={<Layers className="w-8 h-8 text-[#BDD2B6]" />}
               title="No template mappings yet"
               description="Map this definition to a tenant's WhatsApp approved template name (e.g. order_shipped) to allow sending."
               action={
@@ -361,7 +361,7 @@ export const DefinitionDetail: React.FC = () => {
                           </td>
                           <td className="py-3.5 px-4">
                             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-[11px] text-slate-200">
-                              <Sliders className="w-3 h-3 text-indigo-400" />
+                              <Sliders className="w-3 h-3 text-[#BDD2B6]" />
                               <span>{varCount} variable{varCount === 1 ? '' : 's'}</span>
                             </span>
                           </td>
@@ -423,7 +423,7 @@ export const DefinitionDetail: React.FC = () => {
                       <div className="flex items-center justify-between text-xs text-slate-400">
                         <span className="font-mono">{m.provider_template_language || 'en_US'}</span>
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-[11px] text-slate-300">
-                          <Sliders className="w-3 h-3 text-indigo-400" />
+                          <Sliders className="w-3 h-3 text-[#BDD2B6]" />
                           <span>{varCount} vars</span>
                         </span>
                       </div>
@@ -513,7 +513,7 @@ export const DefinitionDetail: React.FC = () => {
                 value={templateName}
                 onChange={(e) => setTemplateName(e.target.value)}
                 placeholder="e.g. order_shipped, welcome_v1"
-                className="w-full font-mono bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-xs text-emerald-300 placeholder-slate-500 focus:border-indigo-500 outline-none"
+                className="w-full font-mono bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-xs text-emerald-300 placeholder-slate-500 focus:border-[#798777] outline-none"
               />
             </div>
           </div>
@@ -529,7 +529,7 @@ export const DefinitionDetail: React.FC = () => {
                 value={templateLanguage}
                 onChange={(e) => setTemplateLanguage(e.target.value)}
                 placeholder="en_US or en"
-                className="w-full font-mono bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 outline-none"
+                className="w-full font-mono bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:border-[#798777] outline-none"
               />
             </div>
 
@@ -556,11 +556,11 @@ export const DefinitionDetail: React.FC = () => {
           <div className="pt-3 border-t border-slate-800 space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <label className="block text-xs font-semibold text-slate-200">
+                <label className="block text-xs font-semibold text-[#F8EDE3]">
                   Variable Mapping (Key-Value)
                 </label>
-                <p className="text-[11px] text-slate-400 mt-0.5">
-                  Position matches the <code className="text-indigo-300">{"{{1}}"}</code>, <code className="text-indigo-300">{"{{2}}"}</code> placeholders in your Meta template. Data field is the key from your SaaS payload.
+                <p className="text-[11px] text-[#A2B29F] mt-0.5">
+                  Position matches the <code className="text-[#BDD2B6]">{"{{1}}"}</code>, <code className="text-[#BDD2B6]">{"{{2}}"}</code> placeholders in your Meta template. Data field is the key from your SaaS payload.
                 </p>
               </div>
               <Button
@@ -568,7 +568,7 @@ export const DefinitionDetail: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={handleAddVariableRow}
-                className="flex items-center gap-1 border-indigo-500/30 text-indigo-300"
+                className="flex items-center gap-1 border-[#798777]/40 text-[#BDD2B6]"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Variable</span>
@@ -576,7 +576,7 @@ export const DefinitionDetail: React.FC = () => {
             </div>
 
             <div className="rounded-xl border border-slate-800 bg-slate-950 p-3 space-y-2">
-              <div className="grid grid-cols-12 gap-2 text-[11px] font-semibold text-slate-400 px-1">
+              <div className="grid grid-cols-12 gap-2 text-[11px] font-semibold text-[#A2B29F] px-1">
                 <span className="col-span-4">Position (Parameter #)</span>
                 <span className="col-span-7">Data Field (Key in payload)</span>
                 <span className="col-span-1 text-center">Action</span>
@@ -591,7 +591,7 @@ export const DefinitionDetail: React.FC = () => {
                       value={row.position}
                       onChange={(e) => handleVariableChange(idx, 'position', e.target.value)}
                       placeholder="e.g. 1"
-                      className="w-full font-mono text-xs bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-indigo-300 focus:border-indigo-500 outline-none"
+                      className="w-full font-mono text-xs bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-[#BDD2B6] focus:border-[#798777] outline-none"
                     />
                   </div>
                   <div className="col-span-7">
@@ -601,7 +601,7 @@ export const DefinitionDetail: React.FC = () => {
                       value={row.field}
                       onChange={(e) => handleVariableChange(idx, 'field', e.target.value)}
                       placeholder="e.g. customerName, trackingNumber"
-                      className="w-full font-mono text-xs bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-100 focus:border-indigo-500 outline-none"
+                      className="w-full font-mono text-xs bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-100 focus:border-[#798777] outline-none"
                     />
                   </div>
                   <div className="col-span-1 flex justify-center">

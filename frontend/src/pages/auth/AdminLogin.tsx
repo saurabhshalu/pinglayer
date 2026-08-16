@@ -40,8 +40,8 @@ export const AdminLogin: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-4 relative overflow-hidden">
       {/* Background Decorative Glows */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-violet-600/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#798777]/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[#BDD2B6]/15 rounded-full blur-3xl pointer-events-none" />
 
       <motion.div
         initial={{ opacity: 0, y: 15 }}
@@ -51,13 +51,13 @@ export const AdminLogin: React.FC = () => {
       >
         {/* Logo Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex p-3.5 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 shadow-xl shadow-indigo-600/25 mb-4">
-            <Shield className="w-7 h-7 text-white" />
+          <div className="inline-flex p-3.5 rounded-2xl bg-gradient-to-tr from-[#798777] to-[#BDD2B6] shadow-xl shadow-[#798777]/25 mb-4">
+            <Shield className="w-7 h-7 text-[#111511]" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-[#F8EDE3]">
             PingLayer Platform Admin
           </h1>
-          <p className="text-xs text-slate-400 mt-1.5">
+          <p className="text-xs text-[#A2B29F] mt-1.5">
             Authenticate using the system admin secret key to manage tenants & products.
           </p>
         </div>
@@ -93,7 +93,7 @@ export const AdminLogin: React.FC = () => {
           <div className="pt-4 border-t border-slate-800/80 text-center">
             <Link
               to="/api-login"
-              className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-indigo-400 transition-colors font-medium"
+              className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-[#BDD2B6] transition-colors font-medium"
             >
               <KeyRound className="w-3.5 h-3.5" />
               <span>Are you a Product User? Sign in with API Key</span>

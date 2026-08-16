@@ -26,7 +26,7 @@ export const TenantDisplay: React.FC<TenantDisplayProps> = ({
   if (!hasName) {
     return (
       <div className={`min-w-0 ${className}`} title={tenantId}>
-        <span className={`font-mono font-semibold text-indigo-300 break-all ${titleSizeClass}`}>
+        <span className={`font-mono font-semibold text-[#BDD2B6] break-all ${titleSizeClass}`}>
           {tenantId}
         </span>
       </div>

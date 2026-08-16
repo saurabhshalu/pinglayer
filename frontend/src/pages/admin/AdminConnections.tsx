@@ -131,7 +131,7 @@ export const AdminConnections: React.FC = () => {
       case Channel.Sms:
         return <MessageSquare className="w-3.5 h-3.5 text-amber-400" />;
       default:
-        return <Link2 className="w-3.5 h-3.5 text-indigo-400" />;
+        return <Link2 className="w-3.5 h-3.5 text-[#BDD2B6]" />;
     }
   };
 
@@ -145,11 +145,11 @@ export const AdminConnections: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <Link2 className="w-5 h-5 text-indigo-400" />
+          <h2 className="text-xl font-bold tracking-tight text-[#F8EDE3] flex items-center gap-2.5">
+            <Link2 className="w-5 h-5 text-[#BDD2B6]" />
             <span>All Tenant Connections</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#A2B29F] mt-1">
             Global oversight of all tenant connections across all SaaS products.
           </p>
         </div>
@@ -166,15 +166,15 @@ export const AdminConnections: React.FC = () => {
 
       {/* Filter Bar */}
       <Card className="p-4 space-y-3">
-        <div className="flex items-center gap-2 text-xs font-semibold text-slate-300">
-          <Filter className="w-3.5 h-3.5 text-indigo-400" />
+        <div className="flex items-center gap-2 text-xs font-semibold text-[#F8EDE3]">
+          <Filter className="w-3.5 h-3.5 text-[#BDD2B6]" />
           <span>Filter Connections</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
           {/* Product Filter */}
           <div>
-            <label className="block text-[11px] font-medium text-slate-400 mb-1">Product</label>
+            <label className="block text-[11px] font-medium text-[#A2B29F] mb-1">Product</label>
             <Select
               value={productIdFilter || 'ALL'}
               onValueChange={(val) => setProductIdFilter(val === 'ALL' ? '' : val)}
@@ -198,13 +198,13 @@ export const AdminConnections: React.FC = () => {
 
           {/* Tenant Filter */}
           <div>
-            <label className="block text-[11px] font-medium text-slate-400 mb-1">Tenant ID</label>
+            <label className="block text-[11px] font-medium text-[#A2B29F] mb-1">Tenant ID</label>
             <input
               type="text"
               value={tenantIdFilter}
               onChange={(e) => setTenantIdFilter(e.target.value)}
               placeholder="e.g. merchant-123"
-              className="w-full bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 outline-none"
+              className="w-full bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-[#798777] focus:ring-1 focus:ring-[#798777]/50 outline-none"
             />
           </div>
 
@@ -255,7 +255,7 @@ export const AdminConnections: React.FC = () => {
           <TableSkeleton rows={5} columns={7} />
         ) : connections.length === 0 ? (
           <EmptyState
-            icon={<Link2 className="w-8 h-8 text-indigo-400" />}
+            icon={<Link2 className="w-8 h-8 text-[#BDD2B6]" />}
             title="No connections found"
             description="No tenant connections match the current filter criteria."
           />
@@ -320,9 +320,9 @@ export const AdminConnections: React.FC = () => {
                           className="inline-flex items-center gap-1.5"
                         >
                           {validatingId === conn.id ? (
-                            <RefreshCw className="w-3.5 h-3.5 animate-spin text-indigo-400" />
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#BDD2B6]" />
                           ) : (
-                            <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-[#BDD2B6]" />
                           )}
                           <span>Validate</span>
                         </Button>
@@ -341,7 +341,7 @@ export const AdminConnections: React.FC = () => {
                     <div className="min-w-0 flex-1">
                       <TenantDisplay
                         tenantId={conn.tenant_id}
-                        tenantName={(conn.config as any)?.tenant_name}
+                        tenantName={conn.tenant_name || (conn.config as any)?.tenant_name}
                       />
                       <span className="text-xs text-slate-400 font-medium block mt-0.5">
                         {productNameMap[conn.product_id] || 'Product'}
@@ -370,9 +370,9 @@ export const AdminConnections: React.FC = () => {
                       className="inline-flex items-center gap-1 text-xs"
                     >
                       {validatingId === conn.id ? (
-                        <RefreshCw className="w-3.5 h-3.5 animate-spin text-indigo-400" />
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#BDD2B6]" />
                       ) : (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#BDD2B6]" />
                       )}
                       <span>Validate</span>
                     </Button>
@@ -449,7 +449,7 @@ export const AdminConnections: React.FC = () => {
                 {validationResult.result.businessAccountId && (
                   <div className="flex justify-between py-1">
                     <span className="text-slate-400">WABA Account ID</span>
-                    <span className="font-mono text-indigo-300">
+                    <span className="font-mono text-[#BDD2B6]">
                       {validationResult.result.businessAccountId}
                     </span>
                   </div>

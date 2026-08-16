@@ -147,7 +147,7 @@ export const AdminNotifications: React.FC = () => {
       case Channel.Sms:
         return <MessageSquare className="w-3.5 h-3.5 text-amber-400" />;
       default:
-        return <Bell className="w-3.5 h-3.5 text-indigo-400" />;
+        return <Bell className="w-3.5 h-3.5 text-[#BDD2B6]" />;
     }
   };
 
@@ -156,11 +156,11 @@ export const AdminNotifications: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <Bell className="w-5 h-5 text-indigo-400" />
+          <h2 className="text-xl font-bold tracking-tight text-[#F8EDE3] flex items-center gap-2.5">
+            <Bell className="w-5 h-5 text-[#BDD2B6]" />
             <span>All Notifications Log</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#A2B29F] mt-1">
             Global delivery logs, provider statuses, and error tracking across products.
           </p>
         </div>
@@ -179,8 +179,8 @@ export const AdminNotifications: React.FC = () => {
       <Card className="p-4 space-y-4">
         {/* Required Product Selector Banner */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-200">
-            <span className="w-2 h-2 rounded-full bg-indigo-400" />
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#F8EDE3]">
+            <span className="w-2 h-2 rounded-full bg-[#BDD2B6]" />
             <span>Target SaaS Product (Required):</span>
           </div>
           <div className="w-full sm:w-80">
@@ -188,7 +188,7 @@ export const AdminNotifications: React.FC = () => {
               value={selectedProductId || (products[0]?.id ?? '')}
               onValueChange={(val) => setSelectedProductId(val)}
             >
-              <SelectTrigger className="border-indigo-500/40 text-indigo-200 font-semibold">
+              <SelectTrigger className="border-[#798777]/50 text-[#BDD2B6] font-semibold">
                 <SelectValue placeholder={products.length === 0 ? "Loading products..." : "Select Product"} />
               </SelectTrigger>
               <SelectContent>
@@ -210,12 +210,12 @@ export const AdminNotifications: React.FC = () => {
           <button
             type="button"
             onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-300 hover:text-white"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-[#F8EDE3] hover:text-[#BDD2B6]"
           >
-            <Filter className="w-3.5 h-3.5 text-indigo-400" />
+            <Filter className="w-3.5 h-3.5 text-[#BDD2B6]" />
             <span>{mobileFiltersOpen ? 'Hide Filter Options' : 'Show Filter Options'}</span>
             {activeFilterCount > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-bold">
+              <span className="px-1.5 py-0.5 rounded-full bg-[#798777]/20 text-[#BDD2B6] border border-[#A2B29F]/30 text-[10px] font-bold">
                 {activeFilterCount} active
               </span>
             )}
@@ -224,7 +224,7 @@ export const AdminNotifications: React.FC = () => {
             <button
               type="button"
               onClick={handleClearFilters}
-              className="text-[11px] text-indigo-400 hover:text-indigo-300 font-medium"
+              className="text-[11px] text-[#BDD2B6] hover:text-[#F8EDE3] font-medium"
             >
               Clear All
             </button>
@@ -235,25 +235,25 @@ export const AdminNotifications: React.FC = () => {
         <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 text-xs ${mobileFiltersOpen ? 'grid' : 'hidden md:grid'}`}>
           {/* Tenant */}
           <div>
-            <label className="block text-[11px] font-medium text-slate-400 mb-1">Tenant ID</label>
+            <label className="block text-[11px] font-medium text-[#A2B29F] mb-1">Tenant ID</label>
             <input
               type="text"
               value={tenantIdFilter}
               onChange={(e) => setTenantIdFilter(e.target.value)}
               placeholder="e.g. merchant-123"
-              className="w-full bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 outline-none"
+              className="w-full bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-[#798777] focus:ring-1 focus:ring-[#798777]/50 outline-none"
             />
           </div>
 
           {/* Event */}
           <div>
-            <label className="block text-[11px] font-medium text-slate-400 mb-1">Event Key</label>
+            <label className="block text-[11px] font-medium text-[#A2B29F] mb-1">Event Key</label>
             <input
               type="text"
               value={eventFilter}
               onChange={(e) => setEventFilter(e.target.value.toUpperCase())}
               placeholder="ORDER_SHIPPED"
-              className="w-full font-mono uppercase bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 outline-none"
+              className="w-full font-mono uppercase bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-[#798777] focus:ring-1 focus:ring-[#798777]/50 outline-none"
             />
           </div>
 
@@ -300,23 +300,23 @@ export const AdminNotifications: React.FC = () => {
 
           {/* From Date */}
           <div>
-            <label className="block text-[11px] font-medium text-slate-400 mb-1">From Date</label>
+            <label className="block text-[11px] font-medium text-[#A2B29F] mb-1">From Date</label>
             <input
               type="date"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:border-indigo-500 outline-none"
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:border-[#798777] outline-none"
             />
           </div>
 
           {/* To Date */}
           <div>
-            <label className="block text-[11px] font-medium text-slate-400 mb-1">To Date</label>
+            <label className="block text-[11px] font-medium text-[#A2B29F] mb-1">To Date</label>
             <input
               type="date"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:border-indigo-500 outline-none"
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:border-[#798777] outline-none"
             />
           </div>
         </div>
@@ -325,7 +325,7 @@ export const AdminNotifications: React.FC = () => {
           <button
             type="button"
             onClick={handleClearFilters}
-            className="text-xs text-slate-400 hover:text-slate-200 font-medium transition-colors"
+            className="text-xs text-slate-400 hover:text-[#F8EDE3] font-medium transition-colors"
           >
             Clear Filters
           </button>
@@ -338,7 +338,7 @@ export const AdminNotifications: React.FC = () => {
           <TableSkeleton rows={5} columns={8} />
         ) : notifications.length === 0 ? (
           <EmptyState
-            icon={<Bell className="w-8 h-8 text-indigo-400" />}
+            icon={<Bell className="w-8 h-8 text-[#BDD2B6]" />}
             title="No notifications recorded"
             description="No delivery records found for this product with current filter parameters."
           />
@@ -377,7 +377,7 @@ export const AdminNotifications: React.FC = () => {
                         />
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className="font-mono text-[11px] px-2 py-0.5 rounded bg-slate-800 text-indigo-300 border border-slate-700">
+                        <span className="font-mono text-[11px] px-2 py-0.5 rounded bg-slate-800 text-[#BDD2B6] border border-slate-700">
                           {notif.event}
                         </span>
                       </td>
@@ -432,7 +432,7 @@ export const AdminNotifications: React.FC = () => {
                           }}
                           className="inline-flex items-center gap-1"
                         >
-                          <Eye className="w-3.5 h-3.5 text-indigo-400" />
+                          <Eye className="w-3.5 h-3.5 text-[#BDD2B6]" />
                           <span>Inspect</span>
                         </Button>
                       </td>
@@ -453,7 +453,7 @@ export const AdminNotifications: React.FC = () => {
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono text-xs px-2 py-0.5 rounded bg-slate-800 text-indigo-300 font-semibold border border-slate-700">
+                        <span className="font-mono text-xs px-2 py-0.5 rounded bg-slate-800 text-[#BDD2B6] font-semibold border border-slate-700">
                           {notif.event}
                         </span>
                         <TenantDisplay
@@ -486,7 +486,7 @@ export const AdminNotifications: React.FC = () => {
                       }}
                       className="inline-flex items-center gap-1 text-xs"
                     >
-                      <Eye className="w-3.5 h-3.5 text-indigo-400" />
+                      <Eye className="w-3.5 h-3.5 text-[#BDD2B6]" />
                       <span>Inspect</span>
                     </Button>
                   </div>

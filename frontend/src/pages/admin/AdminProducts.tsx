@@ -136,11 +136,11 @@ export const AdminProducts: React.FC = () => {
       {/* Top Header & Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <Layers className="w-5 h-5 text-indigo-400" />
+          <h2 className="text-xl font-bold tracking-tight text-[#F8EDE3] flex items-center gap-2.5">
+            <Layers className="w-5 h-5 text-[#BDD2B6]" />
             <span>SaaS Products</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#A2B29F] mt-1">
             Register and manage multiple tenant-enabled SaaS applications.
           </p>
         </div>
@@ -167,19 +167,19 @@ export const AdminProducts: React.FC = () => {
       {/* Stats Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card className="p-5">
-          <div className="text-xs font-medium text-slate-400">Total Products</div>
-          <div className="text-2xl font-bold text-slate-100 mt-1">{pagination.total || products.length}</div>
+          <div className="text-xs font-medium text-[#A2B29F]">Total Products</div>
+          <div className="text-2xl font-bold text-[#F8EDE3] mt-1">{pagination.total || products.length}</div>
         </Card>
         <Card className="p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Active Products</span>
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-xs font-medium text-[#A2B29F]">Active Products</span>
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#BDD2B6]" />
           </div>
-          <div className="text-2xl font-bold text-emerald-400 mt-1">{activeCount}</div>
+          <div className="text-2xl font-bold text-[#BDD2B6] mt-1">{activeCount}</div>
         </Card>
         <Card className="p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Suspended</span>
+            <span className="text-xs font-medium text-[#A2B29F]">Suspended</span>
             <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
           </div>
           <div className="text-2xl font-bold text-rose-400 mt-1">{suspendedCount}</div>
@@ -190,18 +190,18 @@ export const AdminProducts: React.FC = () => {
       <Card className="p-3">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="relative w-full sm:w-72">
-            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-3.5 h-3.5 text-[#A2B29F] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search products by name or slug..."
-              className="w-full bg-slate-950/80 border border-slate-800 rounded-lg pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+              className="w-full bg-slate-950/80 border border-slate-800 rounded-lg pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-[#798777] focus:ring-1 focus:ring-[#798777] outline-none"
             />
           </div>
 
           <div className="flex items-center gap-2 w-full sm:w-56">
-            <span className="text-xs text-slate-400 whitespace-nowrap">Status:</span>
+            <span className="text-xs text-[#A2B29F] whitespace-nowrap">Status:</span>
             <Select
               value={statusFilter || 'ALL'}
               onValueChange={(val) => setStatusFilter(val === 'ALL' ? undefined : (val as ProductStatus))}
@@ -226,7 +226,7 @@ export const AdminProducts: React.FC = () => {
           <TableSkeleton rows={5} columns={5} />
         ) : filteredProducts.length === 0 ? (
           <EmptyState
-            icon={<Layers className="w-8 h-8 text-indigo-400" />}
+            icon={<Layers className="w-8 h-8 text-[#BDD2B6]" />}
             title="No products found"
             description="No SaaS products registered yet. Create your first product to generate API keys."
             action={{
@@ -257,10 +257,10 @@ export const AdminProducts: React.FC = () => {
                       onClick={() => navigate(`/admin/products/${product.id}`)}
                       className="transition-colors cursor-pointer group"
                     >
-                      <td className="py-3.5 px-4 font-semibold text-slate-100 flex items-center gap-2">
+                      <td className="py-3.5 px-4 font-semibold text-[#F8EDE3] flex items-center gap-2">
                         <span>{product.name}</span>
                       </td>
-                      <td className="py-3.5 px-4 font-mono text-indigo-300 text-xs">
+                      <td className="py-3.5 px-4 font-mono text-[#BDD2B6] text-xs">
                         {product.slug}
                       </td>
                       <td className="py-3.5 px-4">
@@ -280,7 +280,7 @@ export const AdminProducts: React.FC = () => {
                           className="inline-flex items-center gap-1"
                         >
                           <span>View</span>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400" />
+                          <ArrowUpRight className="w-3.5 h-3.5 text-[#BDD2B6]" />
                         </Button>
                       </td>
                     </motion.tr>
@@ -299,8 +299,8 @@ export const AdminProducts: React.FC = () => {
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <h4 className="font-semibold text-sm text-slate-100">{product.name}</h4>
-                      <p className="font-mono text-xs text-indigo-400 mt-0.5">{product.slug}</p>
+                      <h4 className="font-semibold text-sm text-[#F8EDE3]">{product.name}</h4>
+                      <p className="font-mono text-xs text-[#BDD2B6] mt-0.5">{product.slug}</p>
                     </div>
                     <StatusBadge status={product.status} type="product" />
                   </div>
@@ -317,7 +317,7 @@ export const AdminProducts: React.FC = () => {
                       className="inline-flex items-center gap-1 text-[11px]"
                     >
                       <span>View Product</span>
-                      <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400" />
+                      <ArrowUpRight className="w-3.5 h-3.5 text-[#BDD2B6]" />
                     </Button>
                   </div>
                 </div>
@@ -349,7 +349,7 @@ export const AdminProducts: React.FC = () => {
               value={name}
               onChange={(e) => handleNameChange(e.target.value)}
               placeholder="e.g. Inventory SaaS, CRM Pro"
-              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-[#798777] focus:ring-1 focus:ring-[#798777] outline-none"
               autoFocus
             />
           </div>
@@ -359,7 +359,7 @@ export const AdminProducts: React.FC = () => {
               <label className="block text-xs font-medium text-slate-300">
                 Slug <span className="text-rose-400">*</span>
               </label>
-              <span className="text-[11px] text-slate-400 font-mono">^[a-z0-9-]+$</span>
+              <span className="text-[11px] text-[#A2B29F] font-mono">^[a-z0-9-]+$</span>
             </div>
             <input
               type="text"
@@ -370,7 +370,7 @@ export const AdminProducts: React.FC = () => {
                 setSlug(e.target.value);
               }}
               placeholder="e.g. inventory-saas"
-              className="w-full font-mono bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-indigo-300 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+              className="w-full font-mono bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-[#BDD2B6] placeholder-slate-500 focus:border-[#798777] focus:ring-1 focus:ring-[#798777] outline-none"
             />
           </div>
 

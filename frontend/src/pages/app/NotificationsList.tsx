@@ -124,7 +124,7 @@ export const NotificationsList: React.FC = () => {
       case Channel.Sms:
         return <MessageSquare className="w-3.5 h-3.5 text-amber-400" />;
       default:
-        return <Bell className="w-3.5 h-3.5 text-indigo-400" />;
+        return <Bell className="w-3.5 h-3.5 text-[#BDD2B6]" />;
     }
   };
 
@@ -133,11 +133,11 @@ export const NotificationsList: React.FC = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <Bell className="w-5 h-5 text-indigo-400" />
+          <h2 className="text-xl font-bold tracking-tight text-[#F8EDE3] flex items-center gap-2.5">
+            <Bell className="w-5 h-5 text-[#BDD2B6]" />
             <span>Notification Delivery History</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#A2B29F] mt-1">
             Real-time delivery lifecycle logs, provider statuses, and webhook tracking.
           </p>
         </div>
@@ -164,11 +164,11 @@ export const NotificationsList: React.FC = () => {
       {/* Filter Bar Card */}
       <Card className="p-4 space-y-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-300">
-            <Filter className="w-3.5 h-3.5 text-indigo-400" />
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#F8EDE3]">
+            <Filter className="w-3.5 h-3.5 text-[#BDD2B6]" />
             <span>Filter Delivery Records</span>
             {activeFilterCount > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-bold">
+              <span className="px-1.5 py-0.5 rounded-full bg-[#798777]/20 text-[#BDD2B6] border border-[#A2B29F]/30 text-[10px] font-bold">
                 {activeFilterCount} active
               </span>
             )}
@@ -179,7 +179,7 @@ export const NotificationsList: React.FC = () => {
               <button
                 type="button"
                 onClick={clearFilters}
-                className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+                className="text-xs text-[#BDD2B6] hover:text-[#F8EDE3] font-medium transition-colors"
               >
                 Clear All
               </button>
@@ -196,34 +196,34 @@ export const NotificationsList: React.FC = () => {
 
         <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 text-xs ${mobileFiltersOpen ? 'grid' : 'hidden md:grid'}`}>
           <div>
-            <label className="block text-[11px] font-medium text-slate-400 mb-1">Tenant ID</label>
+            <label className="block text-[11px] font-medium text-[#A2B29F] mb-1">Tenant ID</label>
             <input
               type="text"
               value={tenantIdFilter}
               onChange={(e) => setTenantIdFilter(e.target.value)}
               placeholder="e.g. merchant-123"
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 outline-none"
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-[#798777] outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] font-medium text-slate-400 mb-1">Event Key</label>
+            <label className="block text-[11px] font-medium text-[#A2B29F] mb-1">Event Key</label>
             <input
               type="text"
               value={eventFilter}
               onChange={(e) => setEventFilter(e.target.value.toUpperCase())}
               placeholder="ORDER_SHIPPED"
-              className="w-full font-mono uppercase bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 outline-none"
+              className="w-full font-mono uppercase bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-[#798777] outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] font-medium text-slate-400 mb-1">Status</label>
+            <label className="block text-[11px] font-medium text-[#A2B29F] mb-1">Status</label>
             <Select
               value={statusFilter || 'ALL'}
               onValueChange={(val) => setStatusFilter(val === 'ALL' ? '' : (val as NotificationStatus))}
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
               <SelectContent>
@@ -239,12 +239,12 @@ export const NotificationsList: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-[11px] font-medium text-slate-400 mb-1">Channel</label>
+            <label className="block text-[11px] font-medium text-[#A2B29F] mb-1">Channel</label>
             <Select
               value={channelFilter || 'ALL'}
               onValueChange={(val) => setChannelFilter(val === 'ALL' ? '' : (val as Channel))}
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="All Channels" />
               </SelectTrigger>
               <SelectContent>
@@ -257,22 +257,22 @@ export const NotificationsList: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-[11px] font-medium text-slate-400 mb-1">From Date</label>
+            <label className="block text-[11px] font-medium text-[#A2B29F] mb-1">From Date</label>
             <input
               type="date"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:border-indigo-500 outline-none"
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:border-[#798777] outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] font-medium text-slate-400 mb-1">To Date</label>
+            <label className="block text-[11px] font-medium text-[#A2B29F] mb-1">To Date</label>
             <input
               type="date"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:border-indigo-500 outline-none"
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:border-[#798777] outline-none"
             />
           </div>
         </div>
@@ -284,7 +284,7 @@ export const NotificationsList: React.FC = () => {
           <TableSkeleton rows={5} columns={8} />
         ) : notifications.length === 0 ? (
           <EmptyState
-            icon={<Bell className="w-8 h-8 text-indigo-400" />}
+            icon={<Bell className="w-8 h-8 text-[#BDD2B6]" />}
             title="No notifications recorded"
             description="Trigger a notification using the test dispatcher or from your backend API."
             action={{
@@ -383,7 +383,7 @@ export const NotificationsList: React.FC = () => {
                           }}
                           className="inline-flex items-center gap-1"
                         >
-                          <Eye className="w-3.5 h-3.5 text-indigo-400" />
+                          <Eye className="w-3.5 h-3.5 text-[#BDD2B6]" />
                           <span>View</span>
                         </Button>
                       </td>
@@ -404,7 +404,7 @@ export const NotificationsList: React.FC = () => {
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono text-xs px-2 py-0.5 rounded bg-slate-800 text-indigo-300 font-semibold border border-slate-700">
+                        <span className="font-mono text-xs px-2 py-0.5 rounded bg-slate-800 text-[#BDD2B6] font-semibold border border-slate-700">
                           {notif.event}
                         </span>
                         <TenantDisplay
@@ -437,7 +437,7 @@ export const NotificationsList: React.FC = () => {
                       }}
                       className="inline-flex items-center gap-1 text-xs"
                     >
-                      <Eye className="w-3.5 h-3.5 text-indigo-400" />
+                      <Eye className="w-3.5 h-3.5 text-[#BDD2B6]" />
                       <span>View</span>
                     </Button>
                   </div>

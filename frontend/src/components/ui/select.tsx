@@ -19,7 +19,7 @@ const SelectTrigger = React.forwardRef<
     ref={ref}
     className={cn(
       'flex w-full items-center justify-between rounded-lg border border-slate-800 bg-slate-950/80 px-3 text-xs text-slate-200 shadow-sm transition-all duration-150',
-      'hover:border-slate-700 hover:bg-slate-950 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50',
+      'hover:border-slate-700 hover:bg-slate-950 focus:outline-none focus:border-[#798777] focus:ring-1 focus:ring-[#798777]/50',
       'disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 [&>span]:truncate [&>span]:block cursor-pointer group',
       size === 'sm' ? 'h-8 min-h-[2rem] max-h-[2rem] py-1 px-2.5 text-[11px]' : 'h-9 min-h-[2.25rem] max-h-[2.25rem] py-1.5',
       className
@@ -128,14 +128,14 @@ const SelectItem = React.forwardRef<
     ref={ref}
     className={cn(
       'relative flex w-full cursor-pointer select-none items-center rounded-md py-1.5 pl-7 pr-3 text-xs text-slate-300 outline-none transition-colors',
-      'hover:bg-slate-800/80 hover:text-white focus:bg-indigo-600/20 focus:text-indigo-200 focus:font-medium data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'hover:bg-slate-800/80 hover:text-[#F8EDE3] focus:bg-[#798777]/20 focus:text-[#BDD2B6] focus:font-medium data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className
     )}
     {...props}
   >
     <span className="absolute left-2 top-2 flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-3.5 w-3.5 text-indigo-400" />
+        <Check className="h-3.5 w-3.5 text-[#BDD2B6]" />
       </SelectPrimitive.ItemIndicator>
     </span>
 
@@ -143,18 +143,18 @@ const SelectItem = React.forwardRef<
       <div className="flex flex-col py-0.5 text-left min-w-0 w-full">
         <div className="flex items-center gap-2 min-w-0">
           <SelectPrimitive.ItemText>
-            <span className="font-semibold text-slate-100 truncate block">
+            <span className="font-semibold text-[#F8EDE3] truncate block">
               {label}
             </span>
           </SelectPrimitive.ItemText>
           {badge && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-indigo-300 font-mono border border-slate-700 capitalize flex-shrink-0">
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#798777]/20 text-[#BDD2B6] font-mono border border-[#A2B29F]/30 capitalize flex-shrink-0">
               {badge}
             </span>
           )}
         </div>
         {sublabel && (
-          <span className="text-[11px] font-mono text-slate-400 truncate mt-0.5 block">
+          <span className="text-[11px] font-mono text-[#A2B29F] truncate mt-0.5 block">
             {sublabel}
           </span>
         )}

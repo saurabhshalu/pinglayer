@@ -140,7 +140,7 @@ export const SendTestNotificationModal: React.FC<SendTestNotificationModalProps>
       onClose={onClose}
       title={
         <div className="flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-indigo-400" />
+          <Sparkles className="w-5 h-5 text-[#BDD2B6]" />
           <span>Send Test Notification</span>
         </div>
       }
@@ -149,7 +149,7 @@ export const SendTestNotificationModal: React.FC<SendTestNotificationModalProps>
     >
       {loading ? (
         <div className="py-8 flex justify-center items-center">
-          <Loader2 className="w-6 h-6 text-indigo-400 animate-spin" />
+          <Loader2 className="w-6 h-6 text-[#BDD2B6] animate-spin" />
         </div>
       ) : (
         <form onSubmit={handleSend} className="space-y-4">
@@ -163,12 +163,12 @@ export const SendTestNotificationModal: React.FC<SendTestNotificationModalProps>
                 value={tenantId}
                 onValueChange={(val) => setTenantId(val)}
               >
-                <SelectTrigger className="w-full text-indigo-300">
+                <SelectTrigger className="w-full text-[#BDD2B6]">
                   <SelectValue placeholder={connections.length === 0 ? "No connections found" : "Select tenant"} />
                 </SelectTrigger>
                 <SelectContent>
                   {connections.map((c) => {
-                    const friendlyName = (c.config as any)?.tenant_name;
+                    const friendlyName = c.tenant_name || (c.config as any)?.tenant_name;
                     return (
                       <SelectItem
                         key={c.id}
@@ -192,7 +192,7 @@ export const SendTestNotificationModal: React.FC<SendTestNotificationModalProps>
                 value={event}
                 onValueChange={(val) => setEvent(val)}
               >
-                <SelectTrigger className="w-full font-mono text-indigo-300">
+                <SelectTrigger className="w-full font-mono text-[#BDD2B6]">
                   <SelectValue placeholder={definitions.length === 0 ? "No definitions found" : "Select event"} />
                 </SelectTrigger>
                 <SelectContent>
@@ -241,7 +241,7 @@ export const SendTestNotificationModal: React.FC<SendTestNotificationModalProps>
                 value={recipient}
                 onChange={(e) => setRecipient(e.target.value)}
                 placeholder="+14155552671"
-                className="w-full font-mono bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 outline-none"
+                className="w-full font-mono bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-[#798777] outline-none"
               />
             </div>
           </div>
@@ -258,7 +258,7 @@ export const SendTestNotificationModal: React.FC<SendTestNotificationModalProps>
               rows={4}
               value={dataPayload}
               onChange={(e) => setDataPayload(e.target.value)}
-              className="w-full font-mono text-xs bg-slate-950 border border-slate-700 rounded-lg p-3 text-emerald-300 focus:border-indigo-500 outline-none resize-y"
+              className="w-full font-mono text-xs bg-slate-950 border border-slate-700 rounded-lg p-3 text-emerald-300 focus:border-[#798777] outline-none resize-y"
             />
           </div>
 
@@ -284,7 +284,7 @@ export const SendTestNotificationModal: React.FC<SendTestNotificationModalProps>
               <div className="grid grid-cols-2 gap-2 text-slate-300 pt-1 font-mono text-[11px]">
                 <div>
                   <span className="text-slate-500 block">Notification ID:</span>
-                  <span className="text-indigo-300">{result.notificationId}</span>
+                  <span className="text-[#BDD2B6]">{result.notificationId}</span>
                 </div>
                 <div>
                   <span className="text-slate-500 block">Provider Message ID:</span>

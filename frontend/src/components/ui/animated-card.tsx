@@ -17,7 +17,7 @@ export const AnimatedCard = React.forwardRef<HTMLDivElement, AnimatedCardProps>(
         transition={{ duration: 0.25, ease: 'easeOut' }}
         className={cn(
           'relative rounded-2xl border border-slate-800/80 bg-slate-900/60 backdrop-blur-xl p-6 shadow-xl transition-all',
-          glow && 'hover:border-indigo-500/40 hover:shadow-indigo-500/10',
+          glow && 'hover:border-[#798777]/50 hover:shadow-[#798777]/10',
           className
         )}
         {...props}

@@ -186,12 +186,12 @@ export const DefinitionsList: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <FileCode className="w-5 h-5 text-indigo-400" />
+          <h2 className="text-xl font-bold tracking-tight text-[#F8EDE3] flex items-center gap-2.5">
+            <FileCode className="w-5 h-5 text-[#BDD2B6]" />
             <span>Notification Definitions</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            Standard event keys (e.g. <code className="font-mono text-indigo-300">ORDER_SHIPPED</code>) used by your SaaS backend to trigger notifications.
+          <p className="text-xs text-[#A2B29F] mt-1">
+            Standard event keys (e.g. <code className="font-mono text-[#BDD2B6]">ORDER_SHIPPED</code>) used by your SaaS backend to trigger notifications.
           </p>
         </div>
 
@@ -220,7 +220,7 @@ export const DefinitionsList: React.FC = () => {
           <TableSkeleton rows={5} columns={6} />
         ) : definitions.length === 0 ? (
           <EmptyState
-            icon={<FileCode className="w-8 h-8 text-indigo-400" />}
+            icon={<FileCode className="w-8 h-8 text-[#BDD2B6]" />}
             title="No definitions registered yet"
             description="Create your first notification definition (e.g. ORDER_SHIPPED) to map provider templates."
             action={{
@@ -251,11 +251,11 @@ export const DefinitionsList: React.FC = () => {
                       onClick={() => navigate(`/definitions/${def.id}`)}
                       className="hover:bg-slate-800/30 transition-colors cursor-pointer group"
                     >
-                      <td className="py-3.5 px-4 font-mono font-bold text-indigo-300">
+                      <td className="py-3.5 px-4 font-mono font-bold text-[#BDD2B6]">
                         {def.key}
                       </td>
                       <td className="py-3.5 px-4">
-                        <div className="font-semibold text-slate-100">{def.name}</div>
+                        <div className="font-semibold text-[#F8EDE3]">{def.name}</div>
                         {def.description && (
                           <div className="text-[11px] text-slate-400 truncate max-w-xs mt-0.5">
                             {def.description}
@@ -263,7 +263,7 @@ export const DefinitionsList: React.FC = () => {
                         )}
                       </td>
                       <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-1.5 flex-wrap">
+                        <div className="flex items-center gap-1 flex-wrap">
                           {def.channels?.map((ch) => (
                             <span
                               key={ch}
@@ -281,7 +281,7 @@ export const DefinitionsList: React.FC = () => {
                         <Link
                           to={`/definitions/${def.id}`}
                           onClick={(e) => e.stopPropagation()}
-                          className="inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+                          className="inline-flex items-center gap-1.5 text-[#BDD2B6] hover:text-[#F8EDE3] font-medium transition-colors"
                         >
                           <Layers className="w-3.5 h-3.5" />
                           <span>Manage Mappings</span>
@@ -333,10 +333,10 @@ export const DefinitionsList: React.FC = () => {
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <span className="font-mono text-sm font-bold text-indigo-300 block">
+                      <span className="font-mono text-sm font-bold text-[#BDD2B6] block">
                         {def.key}
                       </span>
-                      <h4 className="font-semibold text-xs text-slate-100 mt-0.5">{def.name}</h4>
+                      <h4 className="font-semibold text-xs text-[#F8EDE3] mt-0.5">{def.name}</h4>
                       {def.description && (
                         <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-2">{def.description}</p>
                       )}
@@ -359,7 +359,7 @@ export const DefinitionsList: React.FC = () => {
                     <Link
                       to={`/definitions/${def.id}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-1 text-xs text-indigo-400 font-medium"
+                      className="inline-flex items-center gap-1 text-xs text-[#BDD2B6] font-medium"
                     >
                       <Layers className="w-3.5 h-3.5" />
                       <span>Mappings</span>
@@ -416,7 +416,7 @@ export const DefinitionsList: React.FC = () => {
               <label className="block text-xs font-medium text-slate-300">
                 Event Key <span className="text-rose-400">*</span>
               </label>
-              <span className="text-[11px] text-slate-500 font-mono">^[A-Z_]+$</span>
+              <span className="text-[11px] text-[#A2B29F] font-mono">^[A-Z_]+$</span>
             </div>
             <input
               type="text"
@@ -425,7 +425,7 @@ export const DefinitionsList: React.FC = () => {
               value={key}
               onChange={(e) => setKey(e.target.value.toUpperCase())}
               placeholder="e.g. ORDER_SHIPPED, USER_WELCOME"
-              className="w-full font-mono uppercase bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-indigo-300 placeholder-slate-500 focus:border-indigo-500 outline-none disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full font-mono uppercase bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-[#BDD2B6] placeholder-slate-500 focus:border-[#798777] outline-none disabled:opacity-60 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -439,7 +439,7 @@ export const DefinitionsList: React.FC = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Order Shipped Notification"
-              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 outline-none"
+              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-[#798777] outline-none"
             />
           </div>
 
@@ -452,7 +452,7 @@ export const DefinitionsList: React.FC = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Sent when an order package has been shipped with tracking number."
-              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 outline-none"
+              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-[#798777] outline-none"
             />
           </div>
 
@@ -467,7 +467,7 @@ export const DefinitionsList: React.FC = () => {
                   type="checkbox"
                   checked={selectedChannels.includes(Channel.WhatsApp)}
                   onChange={() => handleChannelToggle(Channel.WhatsApp)}
-                  className="rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-indigo-500"
+                  className="rounded border-slate-700 bg-slate-950 text-[#798777] focus:ring-[#798777]"
                 />
                 <span className="text-xs text-slate-200">WhatsApp (Meta Cloud API)</span>
               </label>
@@ -477,7 +477,7 @@ export const DefinitionsList: React.FC = () => {
                   disabled
                   checked={selectedChannels.includes(Channel.Email)}
                   onChange={() => handleChannelToggle(Channel.Email)}
-                  className="rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-indigo-500"
+                  className="rounded border-slate-700 bg-slate-950 text-[#798777] focus:ring-[#798777]"
                 />
                 <span className="text-xs text-slate-400">Email (Coming soon)</span>
               </label>
@@ -487,7 +487,7 @@ export const DefinitionsList: React.FC = () => {
                   disabled
                   checked={selectedChannels.includes(Channel.Sms)}
                   onChange={() => handleChannelToggle(Channel.Sms)}
-                  className="rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-indigo-500"
+                  className="rounded border-slate-700 bg-slate-950 text-[#798777] focus:ring-[#798777]"
                 />
                 <span className="text-xs text-slate-400">SMS (Coming soon)</span>
               </label>

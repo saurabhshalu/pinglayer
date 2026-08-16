@@ -32,7 +32,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
               'w-full bg-slate-900/90 text-slate-100 placeholder-slate-500 text-sm rounded-lg border px-3.5 py-2.5 pr-11 transition-all duration-150 outline-none',
               error
                 ? 'border-rose-500/50 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20'
-                : 'border-slate-700 hover:border-slate-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20',
+                : 'border-slate-700 hover:border-slate-600 focus:border-[#798777] focus:ring-2 focus:ring-[#798777]/25',
               'disabled:opacity-50 disabled:cursor-not-allowed',
               className
             )}

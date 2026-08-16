@@ -10,7 +10,7 @@ export const AdminRoute: React.FC = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-[#BDD2B6] animate-spin" />
       </div>
     );
   }
@@ -29,7 +29,7 @@ export const ProductRoute: React.FC = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-[#BDD2B6] animate-spin" />
       </div>
     );
   }
@@ -47,7 +47,7 @@ export const PublicRoute: React.FC = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-[#BDD2B6] animate-spin" />
       </div>
     );
   }
@@ -69,7 +69,7 @@ export const RootRedirect: React.FC = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-[#BDD2B6] animate-spin" />
       </div>
     );
   }

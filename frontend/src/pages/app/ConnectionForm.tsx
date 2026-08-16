@@ -199,11 +199,11 @@ export const ConnectionForm: React.FC = () => {
       {/* Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <Link2 className="w-5 h-5 text-indigo-400" />
+          <h2 className="text-xl font-bold tracking-tight text-[#F8EDE3] flex items-center gap-2.5">
+            <Link2 className="w-5 h-5 text-[#BDD2B6]" />
             <span>{isEdit ? 'Edit Tenant Connection' : 'Create Tenant Connection'}</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#A2B29F] mt-1">
             {isEdit
               ? `Update channel parameters or credentials for tenant "${tenantName || tenantId}".`
               : 'Connect a tenant to WhatsApp Meta Cloud API to send notifications.'}
@@ -216,12 +216,12 @@ export const ConnectionForm: React.FC = () => {
             size="sm"
             disabled={testing}
             onClick={handleTestConnection}
-            className="flex items-center gap-1.5 border-indigo-500/30 text-indigo-300"
+            className="flex items-center gap-1.5 border-[#798777]/30 text-[#BDD2B6]"
           >
             {testing ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-[#BDD2B6]" />
             ) : (
-              <Activity className="w-3.5 h-3.5 text-indigo-400" />
+              <Activity className="w-3.5 h-3.5 text-[#BDD2B6]" />
             )}
             <span>Test Connection</span>
           </Button>
@@ -233,24 +233,24 @@ export const ConnectionForm: React.FC = () => {
         <Card className="p-6 space-y-6">
           {/* General Section */}
           <div className="space-y-4">
-            <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2 pb-2 border-b border-slate-800">
-              <Radio className="w-4 h-4 text-indigo-400" />
+            <h3 className="text-xs font-bold text-[#F8EDE3] uppercase tracking-wider flex items-center gap-2 pb-2 border-b border-slate-800">
+              <Radio className="w-4 h-4 text-[#BDD2B6]" />
               <span>General Details</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                  Tenant Display Name <span className="text-slate-500 font-normal">(Friendly Name)</span>
+                  Tenant Display Name <span className="text-[#A2B29F] font-normal">(Friendly Name)</span>
                 </label>
                 <input
                   type="text"
                   value={tenantName}
                   onChange={(e) => setTenantName(e.target.value)}
                   placeholder="e.g. Jasper's Market, Acme Corp"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-[#798777] focus:ring-1 focus:ring-[#798777] outline-none"
                 />
-                <p className="text-[11px] text-slate-500 mt-1">Human-friendly name shown across dashboards instead of raw ID.</p>
+                <p className="text-[11px] text-[#A2B29F] mt-1">Human-friendly name shown across dashboards instead of raw ID.</p>
               </div>
 
               <div>
@@ -264,9 +264,9 @@ export const ConnectionForm: React.FC = () => {
                   value={tenantId}
                   onChange={(e) => setTenantId(e.target.value)}
                   placeholder="e.g. merchant-123, customer-uuid"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none disabled:opacity-60 disabled:cursor-not-allowed font-mono"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-[#798777] focus:ring-1 focus:ring-[#798777] outline-none disabled:opacity-60 disabled:cursor-not-allowed font-mono"
                 />
-                <p className="text-[11px] text-slate-500 mt-1">Unique identifier of your SaaS tenant.</p>
+                <p className="text-[11px] text-[#A2B29F] mt-1">Unique identifier of your SaaS tenant.</p>
               </div>
 
               <div>
@@ -346,7 +346,7 @@ export const ConnectionForm: React.FC = () => {
                       value={ConnectionStatus.Active}
                       checked={status === ConnectionStatus.Active}
                       onChange={() => setStatus(ConnectionStatus.Active)}
-                      className="text-indigo-600 focus:ring-indigo-500 bg-slate-950 border-slate-700 cursor-pointer"
+                      className="text-[#798777] focus:ring-[#798777] bg-slate-950 border-slate-700 cursor-pointer"
                     />
                     <span className="text-xs text-slate-200">Active</span>
                   </label>
@@ -357,7 +357,7 @@ export const ConnectionForm: React.FC = () => {
                       value={ConnectionStatus.Inactive}
                       checked={status === ConnectionStatus.Inactive}
                       onChange={() => setStatus(ConnectionStatus.Inactive)}
-                      className="text-indigo-600 focus:ring-indigo-500 bg-slate-950 border-slate-700 cursor-pointer"
+                      className="text-[#798777] focus:ring-[#798777] bg-slate-950 border-slate-700 cursor-pointer"
                     />
                     <span className="text-xs text-slate-200">Inactive</span>
                   </label>
@@ -369,11 +369,11 @@ export const ConnectionForm: React.FC = () => {
           {/* Meta WhatsApp Credentials Section */}
           <div className="space-y-4 pt-4 border-t border-slate-800">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-              <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+              <h3 className="text-xs font-bold text-[#F8EDE3] uppercase tracking-wider flex items-center gap-2">
                 <Shield className="w-4 h-4 text-emerald-400" />
                 <span>Meta WhatsApp Cloud API Credentials</span>
               </h3>
-              <span className="text-[11px] text-emerald-400 flex items-center gap-1 font-medium">
+              <span className="text-[11px] text-[#BDD2B6] flex items-center gap-1 font-medium">
                 <KeyRound className="w-3 h-3" />
                 <span>AES-256 Encrypted</span>
               </span>
@@ -390,7 +390,7 @@ export const ConnectionForm: React.FC = () => {
                   value={wabaId}
                   onChange={(e) => setWabaId(e.target.value)}
                   placeholder="e.g. 123456789012345"
-                  className="w-full font-mono bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+                  className="w-full font-mono bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-[#798777] focus:ring-1 focus:ring-[#798777] outline-none"
                 />
               </div>
 
@@ -404,7 +404,7 @@ export const ConnectionForm: React.FC = () => {
                   value={phoneNumberId}
                   onChange={(e) => setPhoneNumberId(e.target.value)}
                   placeholder="e.g. 987654321098765"
-                  className="w-full font-mono bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+                  className="w-full font-mono bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-[#798777] focus:ring-1 focus:ring-[#798777] outline-none"
                 />
               </div>
             </div>
@@ -503,7 +503,7 @@ export const ConnectionForm: React.FC = () => {
                 {validationResult.businessAccountId && (
                   <div className="flex justify-between py-1">
                     <span className="text-slate-400">WABA Account ID</span>
-                    <span className="font-mono text-indigo-300">
+                    <span className="font-mono text-[#BDD2B6]">
                       {validationResult.businessAccountId}
                     </span>
                   </div>
