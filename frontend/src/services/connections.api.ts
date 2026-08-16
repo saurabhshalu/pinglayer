@@ -13,6 +13,7 @@ import {
 
 export interface CreateConnectionInput {
   tenantId: string;
+  tenantName?: string | null;
   channel: Channel;
   provider: Provider;
   authMethod: AuthMethod;
@@ -21,6 +22,7 @@ export interface CreateConnectionInput {
 }
 
 export interface UpdateConnectionInput {
+  tenantName?: string | null;
   credentials?: Record<string, string>;
   config?: Record<string, unknown>;
   status?: ConnectionStatus;

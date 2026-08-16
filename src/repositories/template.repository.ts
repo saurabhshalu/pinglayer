@@ -157,7 +157,11 @@ export async function findMappingsByDefinition(
   definitionId: string
 ): Promise<NotificationTemplateMapping[]> {
   const rows = await query<MappingRow>(
-    'SELECT * FROM notification_template_mappings WHERE notification_definition_id = ? ORDER BY created_at',
+    `SELECT m.*, c.tenant_id, c.tenant_name
+     FROM notification_template_mappings m
+     LEFT JOIN connections c ON m.connection_id = c.id
+     WHERE m.notification_definition_id = ?
+     ORDER BY m.created_at`,
     [definitionId]
   );
   return rows.map(parseMapping);

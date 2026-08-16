@@ -21,6 +21,13 @@ import {
 import { Modal } from '../ui/Modal';
 import { StatusBadge } from '../ui/StatusBadge';
 import { Button } from '../ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
 import { useToast } from '../../context/ToastContext';
 
 interface SendTestNotificationModalProps {
@@ -152,19 +159,28 @@ export const SendTestNotificationModal: React.FC<SendTestNotificationModalProps>
               <label className="block text-slate-300 font-medium mb-1">
                 Target Tenant ID <span className="text-rose-400">*</span>
               </label>
-              <select
-                required
+              <Select
                 value={tenantId}
-                onChange={(e) => setTenantId(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-indigo-300 font-mono focus:border-indigo-500 outline-none cursor-pointer"
+                onValueChange={(val) => setTenantId(val)}
               >
-                {connections.length === 0 && <option value="">No connections found</option>}
-                {connections.map((c) => (
-                  <option key={c.id} value={c.tenant_id}>
-                    {c.tenant_id} ({c.channel})
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full text-indigo-300">
+                  <SelectValue placeholder={connections.length === 0 ? "No connections found" : "Select tenant"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {connections.map((c) => {
+                    const friendlyName = (c.config as any)?.tenant_name;
+                    return (
+                      <SelectItem
+                        key={c.id}
+                        value={c.tenant_id}
+                        label={friendlyName || c.tenant_id}
+                        badge={`${c.channel} (${c.provider})`}
+                        sublabel={friendlyName ? c.tenant_id : undefined}
+                      />
+                    );
+                  })}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Event Key */}
@@ -172,19 +188,24 @@ export const SendTestNotificationModal: React.FC<SendTestNotificationModalProps>
               <label className="block text-slate-300 font-medium mb-1">
                 Event Key <span className="text-rose-400">*</span>
               </label>
-              <select
-                required
+              <Select
                 value={event}
-                onChange={(e) => setEvent(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-indigo-300 font-mono focus:border-indigo-500 outline-none cursor-pointer"
+                onValueChange={(val) => setEvent(val)}
               >
-                {definitions.length === 0 && <option value="">No definitions found</option>}
-                {definitions.map((d) => (
-                  <option key={d.id} value={d.key}>
-                    {d.key} ({d.name})
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full font-mono text-indigo-300">
+                  <SelectValue placeholder={definitions.length === 0 ? "No definitions found" : "Select event"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {definitions.map((d) => (
+                    <SelectItem
+                      key={d.id}
+                      value={d.key}
+                      label={d.key}
+                      sublabel={d.name || undefined}
+                    />
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -194,15 +215,19 @@ export const SendTestNotificationModal: React.FC<SendTestNotificationModalProps>
               <label className="block text-slate-300 font-medium mb-1">
                 Channel <span className="text-rose-400">*</span>
               </label>
-              <select
+              <Select
                 value={channel}
-                onChange={(e) => setChannel(e.target.value as Channel)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 outline-none cursor-pointer"
+                onValueChange={(val) => setChannel(val as Channel)}
               >
-                <option value={Channel.WhatsApp}>WhatsApp</option>
-                <option value={Channel.Email} disabled>Email (Coming soon)</option>
-                <option value={Channel.Sms} disabled>SMS (Coming soon)</option>
-              </select>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={Channel.WhatsApp}>WhatsApp</SelectItem>
+                  <SelectItem value={Channel.Email} disabled>Email (Coming soon)</SelectItem>
+                  <SelectItem value={Channel.Sms} disabled>SMS (Coming soon)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Recipient */}
@@ -216,7 +241,7 @@ export const SendTestNotificationModal: React.FC<SendTestNotificationModalProps>
                 value={recipient}
                 onChange={(e) => setRecipient(e.target.value)}
                 placeholder="+14155552671"
-                className="w-full font-mono bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 outline-none"
+                className="w-full font-mono bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 outline-none"
               />
             </div>
           </div>
@@ -233,13 +258,13 @@ export const SendTestNotificationModal: React.FC<SendTestNotificationModalProps>
               rows={4}
               value={dataPayload}
               onChange={(e) => setDataPayload(e.target.value)}
-              className="w-full font-mono text-xs bg-slate-950 border border-slate-700 rounded-xl p-3 text-emerald-300 focus:border-indigo-500 outline-none resize-y"
+              className="w-full font-mono text-xs bg-slate-950 border border-slate-700 rounded-lg p-3 text-emerald-300 focus:border-indigo-500 outline-none resize-y"
             />
           </div>
 
           {/* Error Banner */}
           {error && (
-            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2 animate-fade-in">
+            <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2 animate-fade-in">
               <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
@@ -247,7 +272,7 @@ export const SendTestNotificationModal: React.FC<SendTestNotificationModalProps>
 
           {/* Success / Result Display */}
           {result && (
-            <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs space-y-2 animate-fade-in">
+            <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs space-y-2 animate-fade-in">
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-emerald-300 flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />

@@ -6,6 +6,7 @@ import { EncryptedPayload } from '../crypto/credentials';
 export interface CreateConnectionInput {
   productId: string;
   tenantId: string;
+  tenantName?: string | null;
   channel: Channel;
   provider: Provider;
   authMethod: AuthMethod;
@@ -19,6 +20,7 @@ export interface ConnectionRow extends Omit<Connection, 'config'> {
 function parseConnection(row: ConnectionRow): Connection {
   return {
     ...row,
+    tenant_name: row.tenant_name ?? null,
     config: typeof row.config === 'string' ? JSON.parse(row.config) : row.config,
   };
 }
@@ -33,9 +35,9 @@ export async function createConnection(
     const config = JSON.stringify(input.config ?? {});
 
     await conn.query(
-      `INSERT INTO connections (id, product_id, tenant_id, channel, provider, auth_method, status, config)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id, input.productId, input.tenantId, input.channel, input.provider, input.authMethod, ConnectionStatus.Pending, config]
+      `INSERT INTO connections (id, product_id, tenant_id, tenant_name, channel, provider, auth_method, status, config)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [id, input.productId, input.tenantId, input.tenantName ?? null, input.channel, input.provider, input.authMethod, ConnectionStatus.Pending, config]
     );
 
     await conn.query(
@@ -107,12 +109,13 @@ export async function findByProduct(
 
 export async function updateConnection(
   id: string,
-  updates: Partial<Pick<Connection, 'status' | 'config'>>
+  updates: Partial<Pick<Connection, 'status' | 'config' | 'tenant_name'>>
 ): Promise<void> {
   const fields: string[] = [];
   const params: unknown[] = [];
 
   if (updates.status !== undefined) { fields.push('status = ?'); params.push(updates.status); }
+  if (updates.tenant_name !== undefined) { fields.push('tenant_name = ?'); params.push(updates.tenant_name); }
   if (updates.config !== undefined) { fields.push('config = ?'); params.push(JSON.stringify(updates.config)); }
 
   if (fields.length === 0) return;

@@ -52,6 +52,7 @@ export async function update(req: Request, res: Response, next: NextFunction): P
   try {
     const product = (req as AuthenticatedRequest).product;
     const body = validate<{
+      tenantName?: string;
       credentials?: Record<string, string>;
       config?: Record<string, unknown>;
       status?: ConnectionStatus;

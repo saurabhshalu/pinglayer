@@ -63,7 +63,14 @@ export async function createNotification(input: CreateNotificationInput): Promis
 }
 
 export async function findById(id: string): Promise<Notification | null> {
-  const row = await queryOne<NotificationRow>('SELECT * FROM notifications WHERE id = ?', [id]);
+  const row = await queryOne<NotificationRow>(
+    `SELECT n.*, c.tenant_name
+     FROM notifications n
+     LEFT JOIN connections c ON (n.connection_id = c.id OR (n.product_id = c.product_id AND n.tenant_id = c.tenant_id))
+     WHERE n.id = ?
+     LIMIT 1`,
+    [id]
+  );
   return row ? parseNotification(row) : null;
 }
 
@@ -112,23 +119,32 @@ export async function findByProductAndTenant(
   limit = 20,
   offset = 0
 ): Promise<{ rows: Notification[]; total: number }> {
-  const conditions = ['product_id = ?'];
+  const conditions = ['n.product_id = ?'];
   const params: unknown[] = [productId];
 
-  if (tenantId) { conditions.push('tenant_id = ?'); params.push(tenantId); }
-  if (filters?.status) { conditions.push('status = ?'); params.push(filters.status); }
-  if (filters?.event) { conditions.push('event = ?'); params.push(filters.event); }
-  if (filters?.channel) { conditions.push('channel = ?'); params.push(filters.channel); }
-  if (filters?.fromDate) { conditions.push('created_at >= ?'); params.push(filters.fromDate); }
-  if (filters?.toDate) { conditions.push('created_at <= ?'); params.push(filters.toDate); }
+  if (tenantId) { conditions.push('n.tenant_id = ?'); params.push(tenantId); }
+  if (filters?.status) { conditions.push('n.status = ?'); params.push(filters.status); }
+  if (filters?.event) { conditions.push('n.event = ?'); params.push(filters.event); }
+  if (filters?.channel) { conditions.push('n.channel = ?'); params.push(filters.channel); }
+  if (filters?.fromDate) { conditions.push('n.created_at >= ?'); params.push(filters.fromDate); }
+  if (filters?.toDate) { conditions.push('n.created_at <= ?'); params.push(filters.toDate); }
 
   const where = `WHERE ${conditions.join(' AND ')}`;
   const [rows, totalRow] = await Promise.all([
     query<NotificationRow>(
-      `SELECT * FROM notifications ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+      `SELECT n.*, c.tenant_name
+       FROM notifications n
+       LEFT JOIN (
+         SELECT product_id, tenant_id, MAX(tenant_name) as tenant_name
+         FROM connections
+         GROUP BY product_id, tenant_id
+       ) c ON n.product_id = c.product_id AND n.tenant_id = c.tenant_id
+       ${where}
+       ORDER BY n.created_at DESC
+       LIMIT ? OFFSET ?`,
       [...params, limit, offset]
     ),
-    queryOne<{ total: number }>(`SELECT COUNT(*) as total FROM notifications ${where}`, params),
+    queryOne<{ total: number }>(`SELECT COUNT(*) as total FROM notifications n ${where}`, params),
   ]);
 
   return { rows: rows.map(parseNotification), total: totalRow?.total ?? 0 };

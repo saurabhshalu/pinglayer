@@ -9,6 +9,7 @@ import {
   Mail,
   MessageSquare,
   AlertCircle,
+  Filter,
 } from 'lucide-react';
 import { notificationsApi } from '../../services/notifications.api';
 import { productsApi } from '../../services/products.api';
@@ -25,8 +26,16 @@ import { Modal } from '../../components/ui/Modal';
 import { TableSkeleton } from '../../components/ui/Skeleton';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { JsonViewer } from '../../components/ui/JsonViewer';
+import { TenantDisplay } from '../../components/ui/TenantDisplay';
 import { Button } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
 import { formatDate, truncate, copyToClipboard } from '../../lib/utils';
 import { useToast } from '../../context/ToastContext';
 
@@ -51,6 +60,7 @@ export const AdminNotifications: React.FC = () => {
   const [channelFilter, setChannelFilter] = useState<Channel | ''>('');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   // Inspect Modal
   const [inspectNotification, setInspectNotification] = useState<Notification | null>(null);
@@ -58,7 +68,18 @@ export const AdminNotifications: React.FC = () => {
 
   const { toast } = useToast();
 
-  // 1. Fetch products first to set default selected product
+  const activeFilterCount = [tenantIdFilter, eventFilter, statusFilter, channelFilter, fromDate, toDate].filter(Boolean).length;
+
+  const handleClearFilters = () => {
+    setTenantIdFilter('');
+    setEventFilter('');
+    setStatusFilter('');
+    setChannelFilter('');
+    setFromDate('');
+    setToDate('');
+  };
+
+  // Fetch products first to set default selected product
   useEffect(() => {
     productsApi
       .listProducts({ limit: 100 })
@@ -72,7 +93,7 @@ export const AdminNotifications: React.FC = () => {
       .catch((err) => {
         toast.error('Failed to load products', err?.error?.message);
       });
-  }, [toast, selectedProductId]);
+  }, []);
 
   const fetchNotifications = useCallback(
     async (page = 1) => {
@@ -82,10 +103,10 @@ export const AdminNotifications: React.FC = () => {
         const res = await notificationsApi.listAllNotifications({
           productId: selectedProductId,
           page,
-          limit: 10,
-          tenantId: tenantIdFilter || undefined,
+          limit: 20,
+          tenantId: tenantIdFilter.trim() || undefined,
           status: statusFilter || undefined,
-          event: eventFilter ? eventFilter.toUpperCase() : undefined,
+          event: eventFilter.trim() ? eventFilter.toUpperCase() : undefined,
           channel: channelFilter || undefined,
           fromDate: fromDate || undefined,
           toDate: toDate || undefined,
@@ -115,15 +136,6 @@ export const AdminNotifications: React.FC = () => {
       setCopiedId(id);
       setTimeout(() => setCopiedId(null), 2000);
     }
-  };
-
-  const clearFilters = () => {
-    setTenantIdFilter('');
-    setStatusFilter('');
-    setEventFilter('');
-    setChannelFilter('');
-    setFromDate('');
-    setToDate('');
   };
 
   const getChannelIcon = (ch: Channel) => {
@@ -172,23 +184,55 @@ export const AdminNotifications: React.FC = () => {
             <span>Target SaaS Product (Required):</span>
           </div>
           <div className="w-full sm:w-80">
-            <select
-              value={selectedProductId}
-              onChange={(e) => setSelectedProductId(e.target.value)}
-              className="w-full bg-slate-950 border border-indigo-500/40 rounded-xl px-3.5 py-2 text-xs font-semibold text-indigo-200 focus:border-indigo-500 outline-none cursor-pointer shadow-sm"
+            <Select
+              value={selectedProductId || (products[0]?.id ?? '')}
+              onValueChange={(val) => setSelectedProductId(val)}
             >
-              {products.length === 0 && <option value="">Loading products...</option>}
-              {products.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name} ({p.slug})
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="border-indigo-500/40 text-indigo-200 font-semibold">
+                <SelectValue placeholder={products.length === 0 ? "Loading products..." : "Select Product"} />
+              </SelectTrigger>
+              <SelectContent>
+                {products.map((p) => (
+                  <SelectItem
+                    key={p.id}
+                    value={p.id}
+                    label={p.name}
+                    sublabel={`slug: ${p.slug}`}
+                  />
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
+        {/* Mobile Filter Toggle */}
+        <div className="flex items-center justify-between md:hidden">
+          <button
+            type="button"
+            onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
+            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-300 hover:text-white"
+          >
+            <Filter className="w-3.5 h-3.5 text-indigo-400" />
+            <span>{mobileFiltersOpen ? 'Hide Filter Options' : 'Show Filter Options'}</span>
+            {activeFilterCount > 0 && (
+              <span className="px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-bold">
+                {activeFilterCount} active
+              </span>
+            )}
+          </button>
+          {activeFilterCount > 0 && (
+            <button
+              type="button"
+              onClick={handleClearFilters}
+              className="text-[11px] text-indigo-400 hover:text-indigo-300 font-medium"
+            >
+              Clear All
+            </button>
+          )}
+        </div>
+
         {/* Secondary Filter Inputs */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
+        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 text-xs ${mobileFiltersOpen ? 'grid' : 'hidden md:grid'}`}>
           {/* Tenant */}
           <div>
             <label className="block text-[11px] font-medium text-slate-400 mb-1">Tenant ID</label>
@@ -197,7 +241,7 @@ export const AdminNotifications: React.FC = () => {
               value={tenantIdFilter}
               onChange={(e) => setTenantIdFilter(e.target.value)}
               placeholder="e.g. merchant-123"
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 outline-none"
+              className="w-full bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 outline-none"
             />
           </div>
 
@@ -209,41 +253,49 @@ export const AdminNotifications: React.FC = () => {
               value={eventFilter}
               onChange={(e) => setEventFilter(e.target.value.toUpperCase())}
               placeholder="ORDER_SHIPPED"
-              className="w-full font-mono uppercase bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 outline-none"
+              className="w-full font-mono uppercase bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 outline-none"
             />
           </div>
 
           {/* Status */}
           <div>
             <label className="block text-[11px] font-medium text-slate-400 mb-1">Status</label>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as NotificationStatus | '')}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:border-indigo-500 outline-none cursor-pointer"
+            <Select
+              value={statusFilter || 'ALL'}
+              onValueChange={(val) => setStatusFilter(val === 'ALL' ? '' : (val as NotificationStatus))}
             >
-              <option value="">All Statuses</option>
-              <option value={NotificationStatus.Queued}>Queued</option>
-              <option value={NotificationStatus.Processing}>Processing</option>
-              <option value={NotificationStatus.Sent}>Sent</option>
-              <option value={NotificationStatus.Delivered}>Delivered</option>
-              <option value={NotificationStatus.Read}>Read</option>
-              <option value={NotificationStatus.Failed}>Failed</option>
-            </select>
+              <SelectTrigger>
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All Statuses</SelectItem>
+                <SelectItem value={NotificationStatus.Queued}>Queued</SelectItem>
+                <SelectItem value={NotificationStatus.Processing}>Processing</SelectItem>
+                <SelectItem value={NotificationStatus.Sent}>Sent</SelectItem>
+                <SelectItem value={NotificationStatus.Delivered}>Delivered</SelectItem>
+                <SelectItem value={NotificationStatus.Read}>Read</SelectItem>
+                <SelectItem value={NotificationStatus.Failed}>Failed</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Channel */}
           <div>
             <label className="block text-[11px] font-medium text-slate-400 mb-1">Channel</label>
-            <select
-              value={channelFilter}
-              onChange={(e) => setChannelFilter(e.target.value as Channel | '')}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:border-indigo-500 outline-none cursor-pointer"
+            <Select
+              value={channelFilter || 'ALL'}
+              onValueChange={(val) => setChannelFilter(val === 'ALL' ? '' : (val as Channel))}
             >
-              <option value="">All Channels</option>
-              <option value={Channel.WhatsApp}>WhatsApp</option>
-              <option value={Channel.Email}>Email</option>
-              <option value={Channel.Sms}>SMS</option>
-            </select>
+              <SelectTrigger>
+                <SelectValue placeholder="All Channels" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All Channels</SelectItem>
+                <SelectItem value={Channel.WhatsApp}>WhatsApp</SelectItem>
+                <SelectItem value={Channel.Email}>Email</SelectItem>
+                <SelectItem value={Channel.Sms}>SMS</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* From Date */}
@@ -253,7 +305,7 @@ export const AdminNotifications: React.FC = () => {
               type="date"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:border-indigo-500 outline-none"
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:border-indigo-500 outline-none"
             />
           </div>
 
@@ -264,7 +316,7 @@ export const AdminNotifications: React.FC = () => {
               type="date"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-slate-300 focus:border-indigo-500 outline-none"
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-300 focus:border-indigo-500 outline-none"
             />
           </div>
         </div>
@@ -272,7 +324,7 @@ export const AdminNotifications: React.FC = () => {
         <div className="flex justify-end pt-1">
           <button
             type="button"
-            onClick={clearFilters}
+            onClick={handleClearFilters}
             className="text-xs text-slate-400 hover:text-slate-200 font-medium transition-colors"
           >
             Clear Filters
@@ -291,98 +343,157 @@ export const AdminNotifications: React.FC = () => {
             description="No delivery records found for this product with current filter parameters."
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300 divide-y divide-slate-800/80">
-              <thead className="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
-                <tr>
-                  <th className="py-3.5 px-4">Timestamp</th>
-                  <th className="py-3.5 px-4">Tenant</th>
-                  <th className="py-3.5 px-4">Event</th>
-                  <th className="py-3.5 px-4">Channel</th>
-                  <th className="py-3.5 px-4">Recipient</th>
-                  <th className="py-3.5 px-4">Status</th>
-                  <th className="py-3.5 px-4">Provider Msg ID</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/50">
-                {notifications.map((notif) => (
-                  <tr
-                    key={notif.id}
-                    onClick={() => setInspectNotification(notif)}
-                    className="hover:bg-slate-800/30 transition-colors cursor-pointer"
-                  >
-                    <td className="py-3.5 px-4 text-slate-400 whitespace-nowrap">
-                      {formatDate(notif.created_at)}
-                    </td>
-                    <td className="py-3.5 px-4 font-mono font-medium text-slate-200">
-                      {notif.tenant_id}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <span className="font-mono text-[11px] px-2 py-0.5 rounded bg-slate-800 text-indigo-300 border border-slate-700">
-                        {notif.event}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <div className="inline-flex items-center gap-1.5 capitalize font-medium">
-                        {getChannelIcon(notif.channel)}
-                        <span>{notif.channel}</span>
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-4 font-mono text-slate-300">
-                      {notif.recipient}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <StatusBadge status={notif.status} type="notification" />
-                      {notif.error_message && (
-                        <p className="text-[10px] text-rose-400 truncate max-w-[140px] mt-0.5">
-                          {notif.error_message}
-                        </p>
-                      )}
-                    </td>
-                    <td className="py-3.5 px-4 font-mono text-slate-400">
-                      {notif.provider_message_id ? (
-                        <div className="inline-flex items-center gap-1">
-                          <span>{truncate(notif.provider_message_id, 12)}</span>
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleCopy(notif.provider_message_id!, notif.id);
-                            }}
-                            className="p-1 text-slate-500 hover:text-slate-300"
-                            title="Copy ID"
-                          >
-                            {copiedId === notif.id ? (
-                              <Check className="w-3 h-3 text-emerald-400" />
-                            ) : (
-                              <Copy className="w-3 h-3" />
-                            )}
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="text-slate-600">—</span>
-                      )}
-                    </td>
-                    <td className="py-3.5 px-4 text-right">
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setInspectNotification(notif);
-                        }}
-                        className="inline-flex items-center gap-1"
-                      >
-                        <Eye className="w-3.5 h-3.5 text-indigo-400" />
-                        <span>Inspect</span>
-                      </Button>
-                    </td>
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-300 divide-y divide-slate-800/80">
+                <thead className="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
+                  <tr>
+                    <th className="py-3.5 px-4">Timestamp</th>
+                    <th className="py-3.5 px-4">Tenant</th>
+                    <th className="py-3.5 px-4">Event</th>
+                    <th className="py-3.5 px-4">Channel</th>
+                    <th className="py-3.5 px-4">Recipient</th>
+                    <th className="py-3.5 px-4">Status</th>
+                    <th className="py-3.5 px-4">Provider Msg ID</th>
+                    <th className="py-3.5 px-4 text-right">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-800/50">
+                  {notifications.map((notif) => (
+                    <tr
+                      key={notif.id}
+                      onClick={() => setInspectNotification(notif)}
+                      className="hover:bg-slate-800/30 transition-colors cursor-pointer"
+                    >
+                      <td className="py-3.5 px-4 text-slate-400 whitespace-nowrap">
+                        {formatDate(notif.created_at)}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <TenantDisplay
+                          tenantId={notif.tenant_id}
+                          tenantName={notif.tenant_name}
+                          size="sm"
+                        />
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <span className="font-mono text-[11px] px-2 py-0.5 rounded bg-slate-800 text-indigo-300 border border-slate-700">
+                          {notif.event}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <div className="inline-flex items-center gap-1.5 capitalize font-medium">
+                          {getChannelIcon(notif.channel)}
+                          <span>{notif.channel}</span>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4 font-mono text-slate-300">
+                        {notif.recipient}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <StatusBadge status={notif.status} type="notification" />
+                        {notif.error_message && (
+                          <p className="text-[10px] text-rose-400 truncate max-w-[140px] mt-0.5">
+                            {notif.error_message}
+                          </p>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-4 font-mono text-slate-400">
+                        {notif.provider_message_id ? (
+                          <div className="inline-flex items-center gap-1">
+                            <span>{truncate(notif.provider_message_id, 12)}</span>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleCopy(notif.provider_message_id!, notif.id);
+                              }}
+                              className="p-1 text-slate-500 hover:text-slate-300"
+                              title="Copy ID"
+                            >
+                              {copiedId === notif.id ? (
+                                <Check className="w-3 h-3 text-emerald-400" />
+                              ) : (
+                                <Copy className="w-3 h-3" />
+                              )}
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-slate-600">—</span>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setInspectNotification(notif);
+                          }}
+                          className="inline-flex items-center gap-1"
+                        >
+                          <Eye className="w-3.5 h-3.5 text-indigo-400" />
+                          <span>Inspect</span>
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden divide-y divide-slate-800/80">
+              {notifications.map((notif) => (
+                <div
+                  key={notif.id}
+                  onClick={() => setInspectNotification(notif)}
+                  className="p-4 space-y-3 hover:bg-slate-800/30 transition-colors cursor-pointer active:bg-slate-800/50"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-mono text-xs px-2 py-0.5 rounded bg-slate-800 text-indigo-300 font-semibold border border-slate-700">
+                          {notif.event}
+                        </span>
+                        <TenantDisplay
+                          tenantId={notif.tenant_id}
+                          tenantName={notif.tenant_name}
+                          size="sm"
+                        />
+                      </div>
+                      <p className="font-mono text-xs text-slate-200 mt-1 break-all">{notif.recipient}</p>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <StatusBadge status={notif.status} type="notification" />
+                    </div>
+                  </div>
+
+                  {notif.error_message && (
+                    <p className="text-xs text-rose-400 bg-rose-500/10 p-2 rounded-lg border border-rose-500/20 break-words">
+                      {notif.error_message}
+                    </p>
+                  )}
+
+                  <div className="flex items-center justify-between text-xs text-slate-400 pt-1 border-t border-slate-800/60">
+                    <span>{formatDate(notif.created_at)}</span>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setInspectNotification(notif);
+                      }}
+                      className="inline-flex items-center gap-1 text-xs"
+                    >
+                      <Eye className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>Inspect</span>
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
         {/* Pagination */}
@@ -397,42 +508,44 @@ export const AdminNotifications: React.FC = () => {
         maxWidth="xl"
       >
         {inspectNotification && (
-          <div className="space-y-4">
+          <div className="space-y-4 min-w-0">
             {/* Summary Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs">
-              <div>
-                <span className="text-slate-500 block">Notification ID</span>
-                <span className="font-mono text-slate-200 truncate block">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3.5 sm:p-4 rounded-lg bg-slate-950 border border-slate-800 text-xs min-w-0">
+              <div className="min-w-0">
+                <span className="text-slate-500 block text-[11px]">Notification ID</span>
+                <span className="font-mono text-slate-200 truncate block text-xs" title={inspectNotification.id}>
                   {inspectNotification.id}
                 </span>
               </div>
-              <div>
-                <span className="text-slate-500 block">Status</span>
+              <div className="min-w-0">
+                <span className="text-slate-500 block text-[11px]">Status</span>
                 <div className="mt-0.5">
                   <StatusBadge status={inspectNotification.status} type="notification" />
                 </div>
               </div>
-              <div>
-                <span className="text-slate-500 block">Channel / Provider</span>
-                <span className="text-slate-200 capitalize">
+              <div className="min-w-0">
+                <span className="text-slate-500 block text-[11px]">Channel / Provider</span>
+                <span className="text-slate-200 capitalize truncate block text-xs">
                   {inspectNotification.channel} ({inspectNotification.provider || 'meta'})
                 </span>
               </div>
-              <div>
-                <span className="text-slate-500 block">Tenant ID</span>
-                <span className="font-mono text-indigo-300">
-                  {inspectNotification.tenant_id}
-                </span>
+              <div className="min-w-0">
+                <span className="text-slate-500 block text-[11px]">Tenant</span>
+                <TenantDisplay
+                  tenantId={inspectNotification.tenant_id}
+                  tenantName={inspectNotification.tenant_name}
+                  size="sm"
+                />
               </div>
-              <div>
-                <span className="text-slate-500 block">Recipient</span>
-                <span className="font-mono text-slate-200">
+              <div className="min-w-0">
+                <span className="text-slate-500 block text-[11px]">Recipient</span>
+                <span className="font-mono text-slate-200 break-all block text-xs">
                   {inspectNotification.recipient}
                 </span>
               </div>
-              <div>
-                <span className="text-slate-500 block">Event</span>
-                <span className="font-mono text-slate-200">
+              <div className="min-w-0">
+                <span className="text-slate-500 block text-[11px]">Event</span>
+                <span className="font-mono text-slate-200 break-all block text-xs">
                   {inspectNotification.event}
                 </span>
               </div>
@@ -440,17 +553,17 @@ export const AdminNotifications: React.FC = () => {
 
             {/* Error Banner if any */}
             {inspectNotification.error_message && (
-              <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs space-y-1">
-                <div className="font-semibold flex items-center gap-1.5 text-rose-400">
-                  <AlertCircle className="w-4 h-4" />
-                  <span>Error Code: {inspectNotification.error_code || 'DELIVERY_FAILED'}</span>
+              <div className="p-3.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs space-y-1 min-w-0">
+                <div className="font-semibold flex items-center gap-1.5 text-rose-400 min-w-0">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  <span className="truncate">Error Code: {inspectNotification.error_code || 'DELIVERY_FAILED'}</span>
                 </div>
-                <p className="leading-relaxed opacity-90">{inspectNotification.error_message}</p>
+                <p className="leading-relaxed opacity-90 break-words">{inspectNotification.error_message}</p>
               </div>
             )}
 
             {/* Request & Response Payloads */}
-            <div className="space-y-3">
+            <div className="space-y-3 min-w-0">
               <JsonViewer
                 data={inspectNotification.request_metadata}
                 title="Request Metadata & Variables"

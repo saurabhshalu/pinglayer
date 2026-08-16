@@ -95,4 +95,23 @@ describe('product.service', () => {
         .rejects.toMatchObject({ code: 'PRODUCT_INACTIVE', statusCode: 401 });
     });
   });
+
+  describe('rotateProductApiKey', () => {
+    it('throws ValidationError if key is already revoked', async () => {
+      mockRepo.findById.mockResolvedValue(fakeProduct);
+      mockRepo.findApiKeyById.mockResolvedValue({ ...fakeApiKey, status: ApiKeyStatus.Revoked });
+
+      await expect(productService.rotateProductApiKey('prod-1', 'key-1'))
+        .rejects.toMatchObject({ code: 'VALIDATION_ERROR', statusCode: 422 });
+    });
+  });
+
+  describe('revokeApiKey', () => {
+    it('throws ValidationError if key is already revoked', async () => {
+      mockRepo.findApiKeyById.mockResolvedValue({ ...fakeApiKey, status: ApiKeyStatus.Revoked });
+
+      await expect(productService.revokeApiKey('prod-1', 'key-1'))
+        .rejects.toMatchObject({ code: 'VALIDATION_ERROR', statusCode: 422 });
+    });
+  });
 });

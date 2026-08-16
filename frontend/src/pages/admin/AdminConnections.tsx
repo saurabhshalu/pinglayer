@@ -26,8 +26,16 @@ import { Pagination } from '../../components/ui/Pagination';
 import { Modal } from '../../components/ui/Modal';
 import { TableSkeleton } from '../../components/ui/Skeleton';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { TenantDisplay } from '../../components/ui/TenantDisplay';
 import { Button } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
 import { formatDate } from '../../lib/utils';
 import { useToast } from '../../context/ToastContext';
 
@@ -167,18 +175,25 @@ export const AdminConnections: React.FC = () => {
           {/* Product Filter */}
           <div>
             <label className="block text-[11px] font-medium text-slate-400 mb-1">Product</label>
-            <select
-              value={productIdFilter}
-              onChange={(e) => setProductIdFilter(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:border-indigo-500 outline-none cursor-pointer"
+            <Select
+              value={productIdFilter || 'ALL'}
+              onValueChange={(val) => setProductIdFilter(val === 'ALL' ? '' : val)}
             >
-              <option value="">All Products</option>
-              {products.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name} ({p.slug})
-                </option>
-              ))}
-            </select>
+              <SelectTrigger>
+                <SelectValue placeholder="All Products" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All Products</SelectItem>
+                {products.map((p) => (
+                  <SelectItem
+                    key={p.id}
+                    value={p.id}
+                    label={p.name}
+                    sublabel={`slug: ${p.slug}`}
+                  />
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Tenant Filter */}
@@ -189,39 +204,47 @@ export const AdminConnections: React.FC = () => {
               value={tenantIdFilter}
               onChange={(e) => setTenantIdFilter(e.target.value)}
               placeholder="e.g. merchant-123"
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 outline-none"
+              className="w-full bg-slate-950/80 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 outline-none"
             />
           </div>
 
           {/* Channel Filter */}
           <div>
             <label className="block text-[11px] font-medium text-slate-400 mb-1">Channel</label>
-            <select
-              value={channelFilter}
-              onChange={(e) => setChannelFilter(e.target.value as Channel | '')}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:border-indigo-500 outline-none cursor-pointer"
+            <Select
+              value={channelFilter || 'ALL'}
+              onValueChange={(val) => setChannelFilter(val === 'ALL' ? '' : (val as Channel))}
             >
-              <option value="">All Channels</option>
-              <option value={Channel.WhatsApp}>WhatsApp</option>
-              <option value={Channel.Email}>Email</option>
-              <option value={Channel.Sms}>SMS</option>
-            </select>
+              <SelectTrigger>
+                <SelectValue placeholder="All Channels" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All Channels</SelectItem>
+                <SelectItem value={Channel.WhatsApp}>WhatsApp</SelectItem>
+                <SelectItem value={Channel.Email}>Email</SelectItem>
+                <SelectItem value={Channel.Sms}>SMS</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Status Filter */}
           <div>
             <label className="block text-[11px] font-medium text-slate-400 mb-1">Status</label>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as ConnectionStatus | '')}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:border-indigo-500 outline-none cursor-pointer"
+            <Select
+              value={statusFilter || 'ALL'}
+              onValueChange={(val) => setStatusFilter(val === 'ALL' ? '' : (val as ConnectionStatus))}
             >
-              <option value="">All Statuses</option>
-              <option value={ConnectionStatus.Active}>Active</option>
-              <option value={ConnectionStatus.Inactive}>Inactive</option>
-              <option value={ConnectionStatus.Invalid}>Invalid</option>
-              <option value={ConnectionStatus.Pending}>Pending</option>
-            </select>
+              <SelectTrigger>
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All Statuses</SelectItem>
+                <SelectItem value={ConnectionStatus.Active}>Active</SelectItem>
+                <SelectItem value={ConnectionStatus.Inactive}>Inactive</SelectItem>
+                <SelectItem value={ConnectionStatus.Invalid}>Invalid</SelectItem>
+                <SelectItem value={ConnectionStatus.Pending}>Pending</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </Card>
@@ -237,73 +260,127 @@ export const AdminConnections: React.FC = () => {
             description="No tenant connections match the current filter criteria."
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300 divide-y divide-slate-800/80">
-              <thead className="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
-                <tr>
-                  <th className="py-3.5 px-4">Product</th>
-                  <th className="py-3.5 px-4">Tenant ID</th>
-                  <th className="py-3.5 px-4">Channel</th>
-                  <th className="py-3.5 px-4">Provider</th>
-                  <th className="py-3.5 px-4">Auth Method</th>
-                  <th className="py-3.5 px-4">Status</th>
-                  <th className="py-3.5 px-4">Created Date</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/50">
-                {connections.map((conn) => (
-                  <tr key={conn.id} className="hover:bg-slate-800/30 transition-colors">
-                    <td className="py-3.5 px-4">
-                      <div className="font-semibold text-slate-200">
-                        {productNameMap[conn.product_id] || 'Product'}
-                      </div>
-                      <div className="font-mono text-[10px] text-slate-500 truncate max-w-[120px]">
-                        {conn.product_id}
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-4 font-mono font-medium text-indigo-300">
-                      {conn.tenant_id}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <div className="inline-flex items-center gap-1.5 capitalize">
-                        {getChannelIcon(conn.channel)}
-                        <span>{conn.channel}</span>
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-4 capitalize text-slate-300">
-                      {conn.provider}
-                    </td>
-                    <td className="py-3.5 px-4 font-mono text-[11px] text-slate-400">
-                      {conn.auth_method}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <StatusBadge status={conn.status} type="connection" />
-                    </td>
-                    <td className="py-3.5 px-4 text-slate-400">
-                      {formatDate(conn.created_at)}
-                    </td>
-                    <td className="py-3.5 px-4 text-right">
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        disabled={validatingId === conn.id}
-                        onClick={() => handleValidate(conn)}
-                        className="inline-flex items-center gap-1.5"
-                      >
-                        {validatingId === conn.id ? (
-                          <RefreshCw className="w-3.5 h-3.5 animate-spin text-indigo-400" />
-                        ) : (
-                          <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400" />
-                        )}
-                        <span>Validate</span>
-                      </Button>
-                    </td>
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-300 divide-y divide-slate-800/80">
+                <thead className="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
+                  <tr>
+                    <th className="py-3.5 px-4">Product</th>
+                    <th className="py-3.5 px-4">Tenant ID</th>
+                    <th className="py-3.5 px-4">Channel</th>
+                    <th className="py-3.5 px-4">Provider</th>
+                    <th className="py-3.5 px-4">Auth Method</th>
+                    <th className="py-3.5 px-4">Status</th>
+                    <th className="py-3.5 px-4">Created Date</th>
+                    <th className="py-3.5 px-4 text-right">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-800/50">
+                  {connections.map((conn) => (
+                    <tr key={conn.id} className="hover:bg-slate-800/30 transition-colors">
+                      <td className="py-3.5 px-4">
+                        <div className="font-semibold text-slate-200">
+                          {productNameMap[conn.product_id] || 'Product'}
+                        </div>
+                        <div className="font-mono text-[10px] text-slate-500 truncate max-w-[120px]">
+                          {conn.product_id}
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <TenantDisplay
+                          tenantId={conn.tenant_id}
+                          tenantName={(conn.config as any)?.tenant_name}
+                        />
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <div className="inline-flex items-center gap-1.5 capitalize">
+                          {getChannelIcon(conn.channel)}
+                          <span>{conn.channel}</span>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4 capitalize text-slate-300">
+                        {conn.provider}
+                      </td>
+                      <td className="py-3.5 px-4 font-mono text-[11px] text-slate-400">
+                        {conn.auth_method}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <StatusBadge status={conn.status} type="connection" />
+                      </td>
+                      <td className="py-3.5 px-4 text-slate-400">
+                        {formatDate(conn.created_at)}
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          disabled={validatingId === conn.id}
+                          onClick={() => handleValidate(conn)}
+                          className="inline-flex items-center gap-1.5"
+                        >
+                          {validatingId === conn.id ? (
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin text-indigo-400" />
+                          ) : (
+                            <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400" />
+                          )}
+                          <span>Validate</span>
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden divide-y divide-slate-800/80">
+              {connections.map((conn) => (
+                <div key={conn.id} className="p-4 space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <TenantDisplay
+                        tenantId={conn.tenant_id}
+                        tenantName={(conn.config as any)?.tenant_name}
+                      />
+                      <span className="text-xs text-slate-400 font-medium block mt-0.5">
+                        {productNameMap[conn.product_id] || 'Product'}
+                      </span>
+                    </div>
+                    <StatusBadge status={conn.status} type="connection" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-400">
+                    <div className="flex items-center gap-1.5 capitalize text-slate-200">
+                      {getChannelIcon(conn.channel)}
+                      <span>{conn.channel} ({conn.provider})</span>
+                    </div>
+                    <div className="text-right font-mono text-[11px] text-slate-500">
+                      {conn.auth_method}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-800/60 text-xs">
+                    <span className="text-slate-400">{formatDate(conn.created_at)}</span>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      disabled={validatingId === conn.id}
+                      onClick={() => handleValidate(conn)}
+                      className="inline-flex items-center gap-1 text-xs"
+                    >
+                      {validatingId === conn.id ? (
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin text-indigo-400" />
+                      ) : (
+                        <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400" />
+                      )}
+                      <span>Validate</span>
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
         {/* Pagination */}

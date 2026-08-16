@@ -94,6 +94,7 @@ export interface Connection {
   id: string;
   product_id: string;
   tenant_id: string;
+  tenant_name?: string | null;
   channel: Channel;
   provider: Provider;
   auth_method: AuthMethod;
@@ -143,6 +144,7 @@ export interface NotificationTemplateMapping {
   variable_mapping: Record<string, string>;
   status: TemplateMappingStatus;
   tenant_id?: string;
+  tenant_name?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -151,6 +153,7 @@ export interface Notification {
   id: string;
   product_id: string;
   tenant_id: string;
+  tenant_name?: string | null;
   connection_id: string | null;
   channel: Channel;
   provider: Provider | null;

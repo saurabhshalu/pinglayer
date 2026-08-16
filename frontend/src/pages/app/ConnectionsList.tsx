@@ -28,6 +28,7 @@ import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { TableSkeleton } from '../../components/ui/Skeleton';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { TenantDisplay } from '../../components/ui/TenantDisplay';
 import { Button } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
 import { formatDate } from '../../lib/utils';
@@ -179,87 +180,155 @@ export const ConnectionsList: React.FC = () => {
             }}
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300 divide-y divide-slate-800/80">
-              <thead className="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
-                <tr>
-                  <th className="py-3.5 px-4">Tenant ID</th>
-                  <th className="py-3.5 px-4">Channel</th>
-                  <th className="py-3.5 px-4">Provider</th>
-                  <th className="py-3.5 px-4">Status</th>
-                  <th className="py-3.5 px-4">Auth Method</th>
-                  <th className="py-3.5 px-4">Created Date</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/50">
-                {connections.map((conn) => (
-                  <tr key={conn.id} className="hover:bg-slate-800/30 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-semibold text-indigo-300">
-                      {conn.tenant_id}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <div className="inline-flex items-center gap-1.5 capitalize font-medium">
-                        {getChannelIcon(conn.channel)}
-                        <span>{conn.channel}</span>
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-4 capitalize text-slate-300">
-                      {conn.provider}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <StatusBadge status={conn.status} type="connection" />
-                    </td>
-                    <td className="py-3.5 px-4 font-mono text-slate-400">
-                      {conn.auth_method}
-                    </td>
-                    <td className="py-3.5 px-4 text-slate-400">
-                      {formatDate(conn.created_at)}
-                    </td>
-                    <td className="py-3.5 px-4 text-right">
-                      <div className="inline-flex items-center gap-2">
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          disabled={testingId === conn.id}
-                          onClick={() => handleTestConnection(conn)}
-                          className="inline-flex items-center gap-1 text-indigo-300"
-                          title="Live Status Test"
-                        >
-                          {testingId === conn.id ? (
-                            <RefreshCw className="w-3 h-3 animate-spin text-indigo-400" />
-                          ) : (
-                            <Activity className="w-3 h-3 text-indigo-400" />
-                          )}
-                          <span>Test</span>
-                        </Button>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          asChild
-                          className="inline-flex items-center gap-1"
-                        >
-                          <Link to={`/connections/${conn.id}`}>
-                            <Edit2 className="w-3 h-3" />
-                            <span>Edit</span>
-                          </Link>
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => setDeleteId(conn.id)}
-                          className="inline-flex items-center gap-1"
-                          title="Delete Connection"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </td>
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-300 divide-y divide-slate-800/80">
+                <thead className="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
+                  <tr>
+                    <th className="py-3.5 px-4">Tenant ID</th>
+                    <th className="py-3.5 px-4">Channel</th>
+                    <th className="py-3.5 px-4">Provider</th>
+                    <th className="py-3.5 px-4">Status</th>
+                    <th className="py-3.5 px-4">Auth Method</th>
+                    <th className="py-3.5 px-4">Created Date</th>
+                    <th className="py-3.5 px-4 text-right">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-800/50">
+                  {connections.map((conn) => (
+                    <tr key={conn.id} className="hover:bg-slate-800/30 transition-colors">
+                      <td className="py-3.5 px-4">
+                        <TenantDisplay
+                          tenantId={conn.tenant_id}
+                          tenantName={(conn.config as any)?.tenant_name}
+                        />
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <div className="inline-flex items-center gap-1.5 capitalize font-medium">
+                          {getChannelIcon(conn.channel)}
+                          <span>{conn.channel}</span>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4 capitalize text-slate-300">
+                        {conn.provider}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <StatusBadge status={conn.status} type="connection" />
+                      </td>
+                      <td className="py-3.5 px-4 font-mono text-slate-400">
+                        {conn.auth_method}
+                      </td>
+                      <td className="py-3.5 px-4 text-slate-400">
+                        {formatDate(conn.created_at)}
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        <div className="inline-flex items-center gap-2">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            disabled={testingId === conn.id}
+                            onClick={() => handleTestConnection(conn)}
+                            className="inline-flex items-center gap-1 text-indigo-300"
+                            title="Live Status Test"
+                          >
+                            {testingId === conn.id ? (
+                              <RefreshCw className="w-3 h-3 animate-spin text-indigo-400" />
+                            ) : (
+                              <Activity className="w-3 h-3 text-indigo-400" />
+                            )}
+                            <span>Test</span>
+                          </Button>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            asChild
+                            className="inline-flex items-center gap-1"
+                          >
+                            <Link to={`/connections/${conn.id}`}>
+                              <Edit2 className="w-3 h-3" />
+                              <span>Edit</span>
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => setDeleteId(conn.id)}
+                            className="inline-flex items-center gap-1"
+                            title="Delete Connection"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden divide-y divide-slate-800/80">
+              {connections.map((conn) => (
+                <div key={conn.id} className="p-4 space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <TenantDisplay
+                        tenantId={conn.tenant_id}
+                        tenantName={(conn.config as any)?.tenant_name}
+                      />
+                      <div className="inline-flex items-center gap-1.5 capitalize text-xs text-slate-300 mt-1">
+                        {getChannelIcon(conn.channel)}
+                        <span>{conn.channel} ({conn.provider})</span>
+                      </div>
+                    </div>
+                    <StatusBadge status={conn.status} type="connection" />
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs text-slate-400">
+                    <span className="font-mono text-[11px]">{conn.auth_method}</span>
+                    <span>{formatDate(conn.created_at)}</span>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800/60">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      disabled={testingId === conn.id}
+                      onClick={() => handleTestConnection(conn)}
+                      className="inline-flex items-center gap-1 text-indigo-300 text-xs"
+                    >
+                      {testingId === conn.id ? (
+                        <RefreshCw className="w-3 h-3 animate-spin text-indigo-400" />
+                      ) : (
+                        <Activity className="w-3 h-3 text-indigo-400" />
+                      )}
+                      <span>Test</span>
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      asChild
+                      className="inline-flex items-center gap-1 text-xs"
+                    >
+                      <Link to={`/connections/${conn.id}`}>
+                        <Edit2 className="w-3 h-3" />
+                        <span>Edit</span>
+                      </Link>
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => setDeleteId(conn.id)}
+                      className="inline-flex items-center gap-1 text-xs"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
         {/* Pagination */}

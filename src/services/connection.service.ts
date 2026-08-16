@@ -20,6 +20,7 @@ import { logger } from '../utils/logger';
 export interface CreateConnectionInput {
   productId: string;
   tenantId: string;
+  tenantName?: string | null;
   channel: Channel;
   provider: Provider;
   authMethod?: AuthMethod;
@@ -28,6 +29,7 @@ export interface CreateConnectionInput {
 }
 
 export interface UpdateConnectionInput {
+  tenantName?: string | null;
   credentials?: Record<string, string>;
   config?: Record<string, unknown>;
   status?: ConnectionStatus;
@@ -53,6 +55,7 @@ export async function createConnection(input: CreateConnectionInput): Promise<Co
     {
       productId: input.productId,
       tenantId: input.tenantId,
+      tenantName: input.tenantName,
       channel: input.channel,
       provider: input.provider,
       authMethod: input.authMethod ?? AuthMethod.Manual,
@@ -130,8 +133,9 @@ export async function updateConnection(
     await connectionRepo.updateCredentials(id, encrypted);
   }
 
-  const updates: Partial<Pick<Connection, 'status' | 'config'>> = {};
+  const updates: Partial<Pick<Connection, 'status' | 'config' | 'tenant_name'>> = {};
   if (input.status !== undefined) updates.status = input.status;
+  if (input.tenantName !== undefined) updates.tenant_name = input.tenantName;
   if (input.config !== undefined) {
     updates.config = { ...(connection.config || {}), ...input.config };
   }

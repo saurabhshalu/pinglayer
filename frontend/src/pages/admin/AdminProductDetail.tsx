@@ -22,6 +22,13 @@ import { TableSkeleton } from '../../components/ui/Skeleton';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { Button } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
 import { formatDate } from '../../lib/utils';
 import { useToast } from '../../context/ToastContext';
 
@@ -39,6 +46,7 @@ export const AdminProductDetail: React.FC = () => {
   const [newKeyData, setNewKeyData] = useState<GeneratedApiKeyResponse | null>(null);
   const [keyModalOpen, setKeyModalOpen] = useState(false);
   const [generatingKey, setGeneratingKey] = useState(false);
+  const [confirmGenerateOpen, setConfirmGenerateOpen] = useState(false);
 
   // Rotate Key State
   const [rotateKeyId, setRotateKeyId] = useState<string | null>(null);
@@ -167,18 +175,22 @@ export const AdminProductDetail: React.FC = () => {
           </div>
 
           {/* Status Dropdown */}
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-400 font-medium">Status:</span>
-            <select
+          <div className="flex items-center gap-2.5 w-44">
+            <span className="text-xs text-slate-400 font-medium whitespace-nowrap">Status:</span>
+            <Select
               value={product.status}
               disabled={statusUpdating}
-              onChange={(e) => handleStatusChange(e.target.value as ProductStatus)}
-              className="bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-1.5 text-xs text-slate-200 focus:border-indigo-500 outline-none cursor-pointer disabled:opacity-50"
+              onValueChange={(val) => handleStatusChange(val as ProductStatus)}
             >
-              <option value={ProductStatus.Active}>Active</option>
-              <option value={ProductStatus.Inactive}>Inactive</option>
-              <option value={ProductStatus.Suspended}>Suspended</option>
-            </select>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ProductStatus.Active}>Active</SelectItem>
+                <SelectItem value={ProductStatus.Inactive}>Inactive</SelectItem>
+                <SelectItem value={ProductStatus.Suspended}>Suspended</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -221,7 +233,7 @@ export const AdminProductDetail: React.FC = () => {
               <RefreshCw className="w-4 h-4" />
             </Button>
             <Button
-              onClick={handleGenerateKey}
+              onClick={() => setConfirmGenerateOpen(true)}
               disabled={generatingKey}
               className="flex items-center gap-2"
             >
@@ -240,70 +252,131 @@ export const AdminProductDetail: React.FC = () => {
               description="Generate an API key for this product so the SaaS team can authenticate and manage notifications."
               action={{
                 label: 'Generate First API Key',
-                onClick: handleGenerateKey,
+                onClick: () => setConfirmGenerateOpen(true),
                 icon: <Plus className="w-4 h-4" />,
               }}
             />
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-300 divide-y divide-slate-800/80">
-                <thead className="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
-                  <tr>
-                    <th className="py-3.5 px-4">Key Prefix</th>
-                    <th className="py-3.5 px-4">Status</th>
-                    <th className="py-3.5 px-4">Created Date</th>
-                    <th className="py-3.5 px-4">Last Used</th>
-                    <th className="py-3.5 px-4">Expires</th>
-                    <th className="py-3.5 px-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/50">
-                  {apiKeys.map((key) => (
-                    <tr key={key.id} className="hover:bg-slate-800/30 transition-colors">
-                      <td className="py-3.5 px-4 font-mono font-semibold text-emerald-400 flex items-center gap-1.5">
-                        <span>{key.key_prefix}••••••••</span>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <StatusBadge status={key.status} type="apikey" />
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-400">
-                        {formatDate(key.created_at)}
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-400">
-                        {formatDate(key.last_used_at)}
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-400">
-                        {formatDate(key.expires_at)}
-                      </td>
-                      <td className="py-3.5 px-4 text-right">
-                        <div className="inline-flex items-center gap-2">
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => setRotateKeyId(key.id)}
-                            className="inline-flex items-center gap-1 text-indigo-300"
-                            title="Rotate Key"
-                          >
-                            <RotateCw className="w-3.5 h-3.5" />
-                            <span>Rotate</span>
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => setRevokeKeyId(key.id)}
-                            className="inline-flex items-center gap-1"
-                            title="Revoke Key"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            <span>Revoke</span>
-                          </Button>
-                        </div>
-                      </td>
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left text-xs text-slate-300 divide-y divide-slate-800/80">
+                  <thead className="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
+                    <tr>
+                      <th className="py-3.5 px-4">Key Prefix</th>
+                      <th className="py-3.5 px-4">Status</th>
+                      <th className="py-3.5 px-4">Created Date</th>
+                      <th className="py-3.5 px-4">Last Used</th>
+                      <th className="py-3.5 px-4">Expires</th>
+                      <th className="py-3.5 px-4 text-right">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/50">
+                    {apiKeys.map((key) => {
+                      const isRevoked = key.status === 'revoked' || Boolean((key as any).revoked_at);
+                      return (
+                        <tr key={key.id} className="hover:bg-slate-800/30 transition-colors">
+                          <td className="py-3.5 px-4 font-mono font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <span>{key.key_prefix}••••••••</span>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <StatusBadge status={key.status} type="apikey" />
+                          </td>
+                          <td className="py-3.5 px-4 text-slate-400">
+                            {formatDate(key.created_at)}
+                          </td>
+                          <td className="py-3.5 px-4 text-slate-400">
+                            {formatDate(key.last_used_at)}
+                          </td>
+                          <td className="py-3.5 px-4 text-slate-400">
+                            {formatDate(key.expires_at)}
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            <div className="inline-flex items-center gap-2">
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                disabled={isRevoked}
+                                onClick={() => setRotateKeyId(key.id)}
+                                className="inline-flex items-center gap-1 text-indigo-300 disabled:opacity-40 disabled:cursor-not-allowed"
+                                title={isRevoked ? 'Key is already revoked' : 'Rotate Key'}
+                              >
+                                <RotateCw className="w-3.5 h-3.5" />
+                                <span>Rotate</span>
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                disabled={isRevoked}
+                                onClick={() => setRevokeKeyId(key.id)}
+                                className="inline-flex items-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed"
+                                title={isRevoked ? 'Key is already revoked' : 'Revoke Key'}
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Revoke</span>
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden divide-y divide-slate-800/80">
+                {apiKeys.map((key) => {
+                  const isRevoked = key.status === 'revoked' || Boolean((key as any).revoked_at);
+                  return (
+                    <div key={key.id} className="p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-sm font-bold text-emerald-400">
+                          {key.key_prefix}••••••••
+                        </span>
+                        <StatusBadge status={key.status} type="apikey" />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-xs text-slate-400">
+                        <div>
+                          <span className="text-slate-500 block text-[11px]">Created</span>
+                          <span>{formatDate(key.created_at)}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-500 block text-[11px]">Last Used</span>
+                          <span>{formatDate(key.last_used_at)}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800/60">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          disabled={isRevoked}
+                          onClick={() => setRotateKeyId(key.id)}
+                          className="inline-flex items-center gap-1 text-indigo-300 text-xs disabled:opacity-40 disabled:cursor-not-allowed"
+                          title={isRevoked ? 'Key is already revoked' : 'Rotate Key'}
+                        >
+                          <RotateCw className="w-3.5 h-3.5" />
+                          <span>Rotate</span>
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          disabled={isRevoked}
+                          onClick={() => setRevokeKeyId(key.id)}
+                          className="inline-flex items-center gap-1 text-xs disabled:opacity-40 disabled:cursor-not-allowed"
+                          title={isRevoked ? 'Key is already revoked' : 'Revoke Key'}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Revoke</span>
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
           )}
         </Card>
       </div>
@@ -335,6 +408,21 @@ export const AdminProductDetail: React.FC = () => {
           />
         )}
       </Modal>
+
+      {/* Generate Key Confirmation */}
+      <ConfirmDialog
+        isOpen={confirmGenerateOpen}
+        title="Generate New API Key"
+        message="Are you sure you want to generate a new API key for this product? The newly generated key will be active immediately and can authenticate against PingLayer."
+        confirmText="Generate Key"
+        cancelText="Cancel"
+        isLoading={generatingKey}
+        onConfirm={() => {
+          setConfirmGenerateOpen(false);
+          handleGenerateKey();
+        }}
+        onCancel={() => setConfirmGenerateOpen(false)}
+      />
 
       {/* Rotate Key Confirmation */}
       <ConfirmDialog

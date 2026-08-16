@@ -20,6 +20,13 @@ import { TableSkeleton } from '../../components/ui/Skeleton';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { Button } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
 import { formatDate } from '../../lib/utils';
 import { useToast } from '../../context/ToastContext';
 
@@ -189,22 +196,26 @@ export const AdminProducts: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search products by name or slug..."
-              className="w-full bg-slate-950/80 border border-slate-800 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+              className="w-full bg-slate-950/80 border border-slate-800 rounded-lg pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
             />
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <span className="text-xs text-slate-400">Status:</span>
-            <select
-              value={statusFilter || ''}
-              onChange={(e) => setStatusFilter((e.target.value as ProductStatus) || undefined)}
-              className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300 focus:border-indigo-500 outline-none cursor-pointer"
+          <div className="flex items-center gap-2 w-full sm:w-56">
+            <span className="text-xs text-slate-400 whitespace-nowrap">Status:</span>
+            <Select
+              value={statusFilter || 'ALL'}
+              onValueChange={(val) => setStatusFilter(val === 'ALL' ? undefined : (val as ProductStatus))}
             >
-              <option value="">All Statuses</option>
-              <option value={ProductStatus.Active}>Active</option>
-              <option value={ProductStatus.Inactive}>Inactive</option>
-              <option value={ProductStatus.Suspended}>Suspended</option>
-            </select>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All Statuses</SelectItem>
+                <SelectItem value={ProductStatus.Active}>Active</SelectItem>
+                <SelectItem value={ProductStatus.Inactive}>Inactive</SelectItem>
+                <SelectItem value={ProductStatus.Suspended}>Suspended</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </Card>
@@ -225,56 +236,94 @@ export const AdminProducts: React.FC = () => {
             }}
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300 divide-y divide-slate-800/80">
-              <thead className="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
-                <tr>
-                  <th className="py-3.5 px-4">Name</th>
-                  <th className="py-3.5 px-4">Slug</th>
-                  <th className="py-3.5 px-4">Status</th>
-                  <th className="py-3.5 px-4">Created Date</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/50">
-                {filteredProducts.map((product) => (
-                  <motion.tr
-                    key={product.id}
-                    whileHover={{ backgroundColor: 'rgba(30, 41, 59, 0.4)' }}
-                    onClick={() => navigate(`/admin/products/${product.id}`)}
-                    className="transition-colors cursor-pointer group"
-                  >
-                    <td className="py-3.5 px-4 font-semibold text-slate-100 flex items-center gap-2">
-                      <span>{product.name}</span>
-                    </td>
-                    <td className="py-3.5 px-4 font-mono text-indigo-300 text-xs">
-                      {product.slug}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <StatusBadge status={product.status} type="product" />
-                    </td>
-                    <td className="py-3.5 px-4 text-slate-400">
-                      {formatDate(product.created_at)}
-                    </td>
-                    <td className="py-3.5 px-4 text-right">
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/admin/products/${product.id}`);
-                        }}
-                        className="inline-flex items-center gap-1"
-                      >
-                        <span>View</span>
-                        <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400" />
-                      </Button>
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-300 divide-y divide-slate-800/80">
+                <thead className="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
+                  <tr>
+                    <th className="py-3.5 px-4">Name</th>
+                    <th className="py-3.5 px-4">Slug</th>
+                    <th className="py-3.5 px-4">Status</th>
+                    <th className="py-3.5 px-4">Created Date</th>
+                    <th className="py-3.5 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/50">
+                  {filteredProducts.map((product) => (
+                    <motion.tr
+                      key={product.id}
+                      whileHover={{ backgroundColor: 'rgba(30, 41, 59, 0.4)' }}
+                      onClick={() => navigate(`/admin/products/${product.id}`)}
+                      className="transition-colors cursor-pointer group"
+                    >
+                      <td className="py-3.5 px-4 font-semibold text-slate-100 flex items-center gap-2">
+                        <span>{product.name}</span>
+                      </td>
+                      <td className="py-3.5 px-4 font-mono text-indigo-300 text-xs">
+                        {product.slug}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <StatusBadge status={product.status} type="product" />
+                      </td>
+                      <td className="py-3.5 px-4 text-slate-400">
+                        {formatDate(product.created_at)}
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/admin/products/${product.id}`);
+                          }}
+                          className="inline-flex items-center gap-1"
+                        >
+                          <span>View</span>
+                          <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400" />
+                        </Button>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden divide-y divide-slate-800/80">
+              {filteredProducts.map((product) => (
+                <div
+                  key={product.id}
+                  onClick={() => navigate(`/admin/products/${product.id}`)}
+                  className="p-4 space-y-3 hover:bg-slate-800/30 transition-colors cursor-pointer active:bg-slate-800/50"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <h4 className="font-semibold text-sm text-slate-100">{product.name}</h4>
+                      <p className="font-mono text-xs text-indigo-400 mt-0.5">{product.slug}</p>
+                    </div>
+                    <StatusBadge status={product.status} type="product" />
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs text-slate-400 pt-1">
+                    <span>Created: {formatDate(product.created_at)}</span>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/admin/products/${product.id}`);
+                      }}
+                      className="inline-flex items-center gap-1 text-[11px]"
+                    >
+                      <span>View Product</span>
+                      <ArrowUpRight className="w-3.5 h-3.5 text-indigo-400" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
         {/* Pagination Controls */}
@@ -300,7 +349,7 @@ export const AdminProducts: React.FC = () => {
               value={name}
               onChange={(e) => handleNameChange(e.target.value)}
               placeholder="e.g. Inventory SaaS, CRM Pro"
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
               autoFocus
             />
           </div>
@@ -321,12 +370,12 @@ export const AdminProducts: React.FC = () => {
                 setSlug(e.target.value);
               }}
               placeholder="e.g. inventory-saas"
-              className="w-full font-mono bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-indigo-300 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+              className="w-full font-mono bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-indigo-300 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
             />
           </div>
 
           {createError && (
-            <p className="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/30 p-2.5 rounded-xl animate-fade-in">
+            <p className="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/30 p-2.5 rounded-lg animate-fade-in">
               {createError}
             </p>
           )}

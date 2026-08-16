@@ -1,7 +1,7 @@
 import * as productRepo from '../repositories/product.repository';
 import { generateApiKey, hashApiKey, verifyApiKey } from '../crypto/apiKeys';
 import { Product, ProductApiKey, ProductStatus, ApiKeyStatus } from '../types';
-import { AppError, NotFoundError, ConflictError, UnauthorizedError } from '../utils/errors';
+import { AppError, NotFoundError, ConflictError, UnauthorizedError, ValidationError } from '../utils/errors';
 import { ErrorCodes } from '../types';
 import { PaginationParams, PaginatedResult } from '../types';
 import { buildPaginatedResult } from '../utils/pagination';
@@ -63,6 +63,9 @@ export async function rotateProductApiKey(
   if (!existing || existing.product_id !== productId) {
     throw new NotFoundError(ErrorCodes.PRODUCT_NOT_FOUND, 'API key not found for this product');
   }
+  if (existing.status === ApiKeyStatus.Revoked) {
+    throw new ValidationError('Cannot rotate an already revoked API key');
+  }
 
   await productRepo.revokeApiKey(keyId);
   return generateProductApiKey(productId);
@@ -72,6 +75,9 @@ export async function revokeApiKey(productId: string, keyId: string): Promise<vo
   const key = await productRepo.findApiKeyById(keyId);
   if (!key || key.product_id !== productId) {
     throw new NotFoundError(ErrorCodes.PRODUCT_NOT_FOUND, 'API key not found');
+  }
+  if (key.status === ApiKeyStatus.Revoked) {
+    throw new ValidationError('API key is already revoked');
   }
   await productRepo.revokeApiKey(keyId);
 }

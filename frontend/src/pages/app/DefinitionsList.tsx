@@ -25,6 +25,13 @@ import { TableSkeleton } from '../../components/ui/Skeleton';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { Button } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
 import { useToast } from '../../context/ToastContext';
 
 export const DefinitionsList: React.FC = () => {
@@ -223,96 +230,172 @@ export const DefinitionsList: React.FC = () => {
             }}
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300 divide-y divide-slate-800/80">
-              <thead className="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
-                <tr>
-                  <th className="py-3.5 px-4">Event Key</th>
-                  <th className="py-3.5 px-4">Name & Description</th>
-                  <th className="py-3.5 px-4">Channels</th>
-                  <th className="py-3.5 px-4">Status</th>
-                  <th className="py-3.5 px-4">Template Mappings</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/50">
-                {definitions.map((def) => (
-                  <tr
-                    key={def.id}
-                    onClick={() => navigate(`/definitions/${def.id}`)}
-                    className="hover:bg-slate-800/30 transition-colors cursor-pointer group"
-                  >
-                    <td className="py-3.5 px-4 font-mono font-bold text-indigo-300">
-                      {def.key}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <div className="font-semibold text-slate-100">{def.name}</div>
-                      {def.description && (
-                        <div className="text-[11px] text-slate-400 truncate max-w-xs mt-0.5">
-                          {def.description}
-                        </div>
-                      )}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        {def.channels?.map((ch) => (
-                          <span
-                            key={ch}
-                            className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px] uppercase font-semibold"
-                          >
-                            {ch}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <StatusBadge status={def.status} type="generic" />
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <Link
-                        to={`/definitions/${def.id}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
-                      >
-                        <Layers className="w-3.5 h-3.5" />
-                        <span>Manage Mappings</span>
-                        <ArrowUpRight className="w-3 h-3" />
-                      </Link>
-                    </td>
-                    <td className="py-3.5 px-4 text-right">
-                      <div className="inline-flex items-center gap-2">
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openEditModal(def);
-                          }}
-                          className="inline-flex items-center gap-1"
-                          title="Edit Definition"
-                        >
-                          <Edit2 className="w-3 h-3" />
-                          <span>Edit</span>
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setDeleteId(def.id);
-                          }}
-                          className="inline-flex items-center gap-1"
-                          title="Delete Definition"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </td>
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-300 divide-y divide-slate-800/80">
+                <thead className="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
+                  <tr>
+                    <th className="py-3.5 px-4">Event Key</th>
+                    <th className="py-3.5 px-4">Name & Description</th>
+                    <th className="py-3.5 px-4">Channels</th>
+                    <th className="py-3.5 px-4">Status</th>
+                    <th className="py-3.5 px-4">Template Mappings</th>
+                    <th className="py-3.5 px-4 text-right">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-800/50">
+                  {definitions.map((def) => (
+                    <tr
+                      key={def.id}
+                      onClick={() => navigate(`/definitions/${def.id}`)}
+                      className="hover:bg-slate-800/30 transition-colors cursor-pointer group"
+                    >
+                      <td className="py-3.5 px-4 font-mono font-bold text-indigo-300">
+                        {def.key}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <div className="font-semibold text-slate-100">{def.name}</div>
+                        {def.description && (
+                          <div className="text-[11px] text-slate-400 truncate max-w-xs mt-0.5">
+                            {def.description}
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {def.channels?.map((ch) => (
+                            <span
+                              key={ch}
+                              className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px] uppercase font-semibold"
+                            >
+                              {ch}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <StatusBadge status={def.status} type="generic" />
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <Link
+                          to={`/definitions/${def.id}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+                        >
+                          <Layers className="w-3.5 h-3.5" />
+                          <span>Manage Mappings</span>
+                          <ArrowUpRight className="w-3 h-3" />
+                        </Link>
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        <div className="inline-flex items-center gap-2">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEditModal(def);
+                            }}
+                            className="inline-flex items-center gap-1"
+                            title="Edit Definition"
+                          >
+                            <Edit2 className="w-3 h-3" />
+                            <span>Edit</span>
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDeleteId(def.id);
+                            }}
+                            className="inline-flex items-center gap-1"
+                            title="Delete Definition"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden divide-y divide-slate-800/80">
+              {definitions.map((def) => (
+                <div
+                  key={def.id}
+                  onClick={() => navigate(`/definitions/${def.id}`)}
+                  className="p-4 space-y-3 hover:bg-slate-800/30 transition-colors cursor-pointer active:bg-slate-800/50"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <span className="font-mono text-sm font-bold text-indigo-300 block">
+                        {def.key}
+                      </span>
+                      <h4 className="font-semibold text-xs text-slate-100 mt-0.5">{def.name}</h4>
+                      {def.description && (
+                        <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-2">{def.description}</p>
+                      )}
+                    </div>
+                    <StatusBadge status={def.status} type="generic" />
+                  </div>
+
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {def.channels?.map((ch) => (
+                      <span
+                        key={ch}
+                        className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-[10px] uppercase font-semibold"
+                      >
+                        {ch}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-800/60">
+                    <Link
+                      to={`/definitions/${def.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-1 text-xs text-indigo-400 font-medium"
+                    >
+                      <Layers className="w-3.5 h-3.5" />
+                      <span>Mappings</span>
+                      <ArrowUpRight className="w-3 h-3" />
+                    </Link>
+
+                    <div className="inline-flex items-center gap-2">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openEditModal(def);
+                        }}
+                        className="inline-flex items-center gap-1 text-xs"
+                      >
+                        <Edit2 className="w-3 h-3" />
+                        <span>Edit</span>
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleteId(def.id);
+                        }}
+                        className="inline-flex items-center gap-1 text-xs"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
         {/* Pagination */}
@@ -342,7 +425,7 @@ export const DefinitionsList: React.FC = () => {
               value={key}
               onChange={(e) => setKey(e.target.value.toUpperCase())}
               placeholder="e.g. ORDER_SHIPPED, USER_WELCOME"
-              className="w-full font-mono uppercase bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-indigo-300 placeholder-slate-500 focus:border-indigo-500 outline-none disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full font-mono uppercase bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-indigo-300 placeholder-slate-500 focus:border-indigo-500 outline-none disabled:opacity-60 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -356,7 +439,7 @@ export const DefinitionsList: React.FC = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Order Shipped Notification"
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 outline-none"
+              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 outline-none"
             />
           </div>
 
@@ -369,7 +452,7 @@ export const DefinitionsList: React.FC = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Sent when an order package has been shipped with tracking number."
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 outline-none"
+              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 outline-none"
             />
           </div>
 
@@ -417,19 +500,23 @@ export const DefinitionsList: React.FC = () => {
               <label className="block text-xs font-medium text-slate-300 mb-1.5">
                 Status
               </label>
-              <select
+              <Select
                 value={status}
-                onChange={(e) => setStatus(e.target.value as NotificationDefinitionStatus)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 outline-none cursor-pointer"
+                onValueChange={(val) => setStatus(val as NotificationDefinitionStatus)}
               >
-                <option value={NotificationDefinitionStatus.Active}>Active</option>
-                <option value={NotificationDefinitionStatus.Inactive}>Inactive</option>
-              </select>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NotificationDefinitionStatus.Active}>Active</SelectItem>
+                  <SelectItem value={NotificationDefinitionStatus.Inactive}>Inactive</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           )}
 
           {formError && (
-            <p className="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/30 p-2.5 rounded-xl animate-fade-in">
+            <p className="text-xs text-rose-400 bg-rose-500/10 border border-rose-500/30 p-2.5 rounded-lg animate-fade-in">
               {formError}
             </p>
           )}

@@ -12,6 +12,7 @@ import {
   RefreshCw,
   Sliders,
   CheckCircle2,
+  AlertCircle,
 } from 'lucide-react';
 import { definitionsApi } from '../../services/definitions.api';
 import { connectionsApi } from '../../services/connections.api';
@@ -26,8 +27,16 @@ import { Modal } from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { TableSkeleton } from '../../components/ui/Skeleton';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { TenantDisplay } from '../../components/ui/TenantDisplay';
 import { Button } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
 import { formatDate } from '../../lib/utils';
 import { useToast } from '../../context/ToastContext';
 
@@ -258,7 +267,7 @@ export const DefinitionDetail: React.FC = () => {
           </div>
         </div>
 
-        <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+        <div className="pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs text-slate-400">
           <span>Created: {formatDate(definition.created_at)}</span>
           <span>Mapped Connections: {mappings.length}</span>
         </div>
@@ -315,76 +324,135 @@ export const DefinitionDetail: React.FC = () => {
               }
             />
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-300 divide-y divide-slate-800/80">
-                <thead className="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
-                  <tr>
-                    <th className="py-3.5 px-4">Connection / Tenant</th>
-                    <th className="py-3.5 px-4">Provider Template</th>
-                    <th className="py-3.5 px-4">Language</th>
-                    <th className="py-3.5 px-4">Variables Count</th>
-                    <th className="py-3.5 px-4">Status</th>
-                    <th className="py-3.5 px-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/50">
-                  {mappings.map((m) => {
-                    const conn = connectionMap[m.connection_id];
-                    const varCount = Object.keys(m.variable_mapping || {}).length;
-                    return (
-                      <tr key={m.id} className="hover:bg-slate-800/30 transition-colors">
-                        <td className="py-3.5 px-4">
-                          <div className="font-mono font-semibold text-indigo-300">
-                            {conn?.tenant_id || m.tenant_id || m.connection_id}
-                          </div>
-                          <div className="text-[11px] text-slate-400 capitalize">
-                            {conn ? `${conn.channel} (${conn.provider})` : 'Connection'}
-                          </div>
-                        </td>
-                        <td className="py-3.5 px-4 font-mono font-medium text-emerald-400">
-                          {m.provider_template_name}
-                        </td>
-                        <td className="py-3.5 px-4 font-mono text-slate-300">
-                          {m.provider_template_language || 'en_US'}
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-[11px] text-slate-200">
-                            <Sliders className="w-3 h-3 text-indigo-400" />
-                            <span>{varCount} variable{varCount === 1 ? '' : 's'}</span>
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left text-xs text-slate-300 divide-y divide-slate-800/80">
+                  <thead className="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
+                    <tr>
+                      <th className="py-3.5 px-4">Connection / Tenant</th>
+                      <th className="py-3.5 px-4">Provider Template</th>
+                      <th className="py-3.5 px-4">Language</th>
+                      <th className="py-3.5 px-4">Variables Count</th>
+                      <th className="py-3.5 px-4">Status</th>
+                      <th className="py-3.5 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/50">
+                    {mappings.map((m) => {
+                      const conn = connectionMap[m.connection_id];
+                      const varCount = Object.keys(m.variable_mapping || {}).length;
+                      return (
+                        <tr key={m.id} className="hover:bg-slate-800/30 transition-colors">
+                          <td className="py-3.5 px-4">
+                            <TenantDisplay
+                              tenantId={conn?.tenant_id || m.tenant_id || m.connection_id}
+                              tenantName={conn?.tenant_name || m.tenant_name || (conn?.config as any)?.tenant_name}
+                            />
+                            <div className="text-[11px] text-slate-400 capitalize mt-0.5">
+                              {conn ? `${conn.channel} (${conn.provider})` : 'Connection'}
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-4 font-mono font-medium text-emerald-400">
+                            {m.provider_template_name}
+                          </td>
+                          <td className="py-3.5 px-4 font-mono text-slate-300">
+                            {m.provider_template_language || 'en_US'}
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-[11px] text-slate-200">
+                              <Sliders className="w-3 h-3 text-indigo-400" />
+                              <span>{varCount} variable{varCount === 1 ? '' : 's'}</span>
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <StatusBadge status={m.status} type="generic" />
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            <div className="inline-flex items-center gap-2">
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => openEditMappingModal(m)}
+                                className="inline-flex items-center gap-1"
+                                title="Edit Mapping"
+                              >
+                                <Edit2 className="w-3 h-3" />
+                                <span>Edit</span>
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => setDeleteMappingId(m.id)}
+                                className="inline-flex items-center gap-1"
+                                title="Delete Mapping"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden divide-y divide-slate-800/80">
+                {mappings.map((m) => {
+                  const conn = connectionMap[m.connection_id];
+                  const varCount = Object.keys(m.variable_mapping || {}).length;
+                  return (
+                    <div key={m.id} className="p-4 space-y-3">
+                      <div className="flex items-start justify-between gap-3 min-w-0">
+                        <div className="min-w-0 flex-1">
+                          <TenantDisplay
+                            tenantId={conn?.tenant_id || m.tenant_id || m.connection_id}
+                            tenantName={conn?.tenant_name || m.tenant_name || (conn?.config as any)?.tenant_name}
+                          />
+                          <span className="font-mono text-xs font-semibold text-emerald-400 mt-1 block break-all">
+                            {m.provider_template_name}
                           </span>
-                        </td>
-                        <td className="py-3.5 px-4">
+                        </div>
+                        <div className="flex-shrink-0">
                           <StatusBadge status={m.status} type="generic" />
-                        </td>
-                        <td className="py-3.5 px-4 text-right">
-                          <div className="inline-flex items-center gap-2">
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              onClick={() => openEditMappingModal(m)}
-                              className="inline-flex items-center gap-1"
-                              title="Edit Mapping"
-                            >
-                              <Edit2 className="w-3 h-3" />
-                              <span>Edit</span>
-                            </Button>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => setDeleteMappingId(m.id)}
-                              className="inline-flex items-center gap-1"
-                              title="Delete Mapping"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between text-xs text-slate-400">
+                        <span className="font-mono">{m.provider_template_language || 'en_US'}</span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-[11px] text-slate-300">
+                          <Sliders className="w-3 h-3 text-indigo-400" />
+                          <span>{varCount} vars</span>
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800/60">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => openEditMappingModal(m)}
+                          className="inline-flex items-center gap-1 text-xs"
+                        >
+                          <Edit2 className="w-3 h-3" />
+                          <span>Edit</span>
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => setDeleteMappingId(m.id)}
+                          className="inline-flex items-center gap-1 text-xs"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>Delete</span>
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
           )}
         </Card>
       </div>
@@ -394,28 +462,45 @@ export const DefinitionDetail: React.FC = () => {
         isOpen={mappingModalOpen}
         onClose={() => setMappingModalOpen(false)}
         title={editingMapping ? 'Edit Template Mapping' : 'Create Template Mapping'}
-        description="Map this event to a provider-specific approved template and wire data payload keys to parameter indices."
-        maxWidth="2xl"
+        description={`Map ${definition.key} to a specific provider template.`}
+        maxWidth="xl"
       >
-        <form onSubmit={handleSaveMapping} className="space-y-4">
+        <form onSubmit={handleSaveMapping} className="space-y-5">
+          {mappingError && (
+            <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-400" />
+              <span>{mappingError}</span>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                Target Connection (Tenant) <span className="text-rose-400">*</span>
+                Tenant Connection <span className="text-rose-400">*</span>
               </label>
-              <select
+              <Select
                 disabled={Boolean(editingMapping)}
-                required
                 value={selectedConnectionId}
-                onChange={(e) => setSelectedConnectionId(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 outline-none cursor-pointer disabled:opacity-60"
+                onValueChange={(val) => setSelectedConnectionId(val)}
               >
-                {connections.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.tenant_id} ({c.channel} - {c.provider})
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select connection" />
+                </SelectTrigger>
+                <SelectContent>
+                  {connections.map((c) => {
+                    const friendlyName = c.tenant_name || (c.config as any)?.tenant_name;
+                    return (
+                      <SelectItem
+                        key={c.id}
+                        value={c.id}
+                        label={friendlyName || c.tenant_id}
+                        badge={`${c.channel} (${c.provider})`}
+                        sublabel={friendlyName ? c.tenant_id : undefined}
+                      />
+                    );
+                  })}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
@@ -428,7 +513,7 @@ export const DefinitionDetail: React.FC = () => {
                 value={templateName}
                 onChange={(e) => setTemplateName(e.target.value)}
                 placeholder="e.g. order_shipped, welcome_v1"
-                className="w-full font-mono bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-emerald-300 placeholder-slate-500 focus:border-indigo-500 outline-none"
+                className="w-full font-mono bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-xs text-emerald-300 placeholder-slate-500 focus:border-indigo-500 outline-none"
               />
             </div>
           </div>
@@ -444,7 +529,7 @@ export const DefinitionDetail: React.FC = () => {
                 value={templateLanguage}
                 onChange={(e) => setTemplateLanguage(e.target.value)}
                 placeholder="en_US or en"
-                className="w-full font-mono bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 outline-none"
+                className="w-full font-mono bg-slate-950/80 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:border-indigo-500 outline-none"
               />
             </div>
 
@@ -452,14 +537,18 @@ export const DefinitionDetail: React.FC = () => {
               <label className="block text-xs font-medium text-slate-300 mb-1.5">
                 Mapping Status
               </label>
-              <select
+              <Select
                 value={status}
-                onChange={(e) => setStatus(e.target.value as TemplateMappingStatus)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-indigo-500 outline-none cursor-pointer"
+                onValueChange={(val) => setStatus(val as TemplateMappingStatus)}
               >
-                <option value={TemplateMappingStatus.Active}>Active</option>
-                <option value={TemplateMappingStatus.Inactive}>Inactive</option>
-              </select>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={TemplateMappingStatus.Active}>Active</SelectItem>
+                  <SelectItem value={TemplateMappingStatus.Inactive}>Inactive</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -486,7 +575,7 @@ export const DefinitionDetail: React.FC = () => {
               </Button>
             </div>
 
-            <div className="rounded-2xl border border-slate-800 bg-slate-950 p-3 space-y-2">
+            <div className="rounded-xl border border-slate-800 bg-slate-950 p-3 space-y-2">
               <div className="grid grid-cols-12 gap-2 text-[11px] font-semibold text-slate-400 px-1">
                 <span className="col-span-4">Position (Parameter #)</span>
                 <span className="col-span-7">Data Field (Key in payload)</span>
@@ -502,7 +591,7 @@ export const DefinitionDetail: React.FC = () => {
                       value={row.position}
                       onChange={(e) => handleVariableChange(idx, 'position', e.target.value)}
                       placeholder="e.g. 1"
-                      className="w-full font-mono text-xs bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-indigo-300 focus:border-indigo-500 outline-none"
+                      className="w-full font-mono text-xs bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-indigo-300 focus:border-indigo-500 outline-none"
                     />
                   </div>
                   <div className="col-span-7">
@@ -512,7 +601,7 @@ export const DefinitionDetail: React.FC = () => {
                       value={row.field}
                       onChange={(e) => handleVariableChange(idx, 'field', e.target.value)}
                       placeholder="e.g. customerName, trackingNumber"
-                      className="w-full font-mono text-xs bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-slate-100 focus:border-indigo-500 outline-none"
+                      className="w-full font-mono text-xs bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-100 focus:border-indigo-500 outline-none"
                     />
                   </div>
                   <div className="col-span-1 flex justify-center">

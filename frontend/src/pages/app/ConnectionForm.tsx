@@ -26,6 +26,13 @@ import { PasswordInput } from '../../components/ui/PasswordInput';
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
 import { useToast } from '../../context/ToastContext';
 
 export const ConnectionForm: React.FC = () => {
@@ -40,6 +47,7 @@ export const ConnectionForm: React.FC = () => {
 
   // Form Fields
   const [tenantId, setTenantId] = useState('');
+  const [tenantName, setTenantName] = useState('');
   const [channel, setChannel] = useState<Channel>(Channel.WhatsApp);
   const [provider, setProvider] = useState<Provider>(Provider.Meta);
   const [authMethod, setAuthMethod] = useState<AuthMethod>(AuthMethod.Manual);
@@ -66,6 +74,12 @@ export const ConnectionForm: React.FC = () => {
           setProvider(conn.provider);
           setAuthMethod(conn.auth_method);
           setStatus(conn.status);
+
+          if (conn.tenant_name) {
+            setTenantName(conn.tenant_name);
+          } else if (conn.config && (conn.config as any).tenant_name) {
+            setTenantName((conn.config as any).tenant_name);
+          }
 
           if (conn.config) {
             if ((conn.config as any).waba_id) setWabaId((conn.config as any).waba_id);
@@ -115,14 +129,16 @@ export const ConnectionForm: React.FC = () => {
         const configUpdate: Record<string, unknown> = {};
         if (wabaId.trim()) configUpdate['waba_id'] = wabaId.trim();
         if (phoneNumberId.trim()) configUpdate['phone_number_id'] = phoneNumberId.trim();
+        configUpdate['tenant_name'] = tenantName.trim();
 
         await connectionsApi.updateConnection(id, {
+          tenantName: tenantName.trim() || null,
           credentials: Object.keys(credentialsUpdate).length > 0 ? credentialsUpdate : undefined,
           config: Object.keys(configUpdate).length > 0 ? configUpdate : undefined,
           status,
         });
 
-        toast.success('Connection updated', `Saved changes for tenant "${tenantId}"`);
+        toast.success('Connection updated', `Saved changes for tenant "${tenantName || tenantId}"`);
         navigate('/connections');
       } else {
         // Create connection
@@ -134,6 +150,7 @@ export const ConnectionForm: React.FC = () => {
 
         await connectionsApi.createConnection({
           tenantId: tenantId.trim(),
+          tenantName: tenantName.trim() || null,
           channel,
           provider,
           authMethod,
@@ -145,10 +162,11 @@ export const ConnectionForm: React.FC = () => {
           config: {
             waba_id: wabaId.trim(),
             phone_number_id: phoneNumberId.trim(),
+            tenant_name: tenantName.trim(),
           },
         });
 
-        toast.success('Connection created', `WhatsApp connection registered for tenant "${tenantId}"`);
+        toast.success('Connection created', `WhatsApp connection registered for tenant "${tenantName || tenantId}"`);
         navigate('/connections');
       }
     } catch (err: any) {
@@ -187,7 +205,7 @@ export const ConnectionForm: React.FC = () => {
           </h2>
           <p className="text-xs text-slate-400 mt-1">
             {isEdit
-              ? `Update channel parameters or credentials for tenant "${tenantId}".`
+              ? `Update channel parameters or credentials for tenant "${tenantName || tenantId}".`
               : 'Connect a tenant to WhatsApp Meta Cloud API to send notifications.'}
           </p>
         </div>
@@ -223,6 +241,20 @@ export const ConnectionForm: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  Tenant Display Name <span className="text-slate-500 font-normal">(Friendly Name)</span>
+                </label>
+                <input
+                  type="text"
+                  value={tenantName}
+                  onChange={(e) => setTenantName(e.target.value)}
+                  placeholder="e.g. Jasper's Market, Acme Corp"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+                />
+                <p className="text-[11px] text-slate-500 mt-1">Human-friendly name shown across dashboards instead of raw ID.</p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-300 mb-1.5">
                   Tenant ID <span className="text-rose-400">*</span>
                 </label>
                 <input
@@ -232,7 +264,7 @@ export const ConnectionForm: React.FC = () => {
                   value={tenantId}
                   onChange={(e) => setTenantId(e.target.value)}
                   placeholder="e.g. merchant-123, customer-uuid"
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none disabled:opacity-60 disabled:cursor-not-allowed font-mono"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none disabled:opacity-60 disabled:cursor-not-allowed font-mono"
                 />
                 <p className="text-[11px] text-slate-500 mt-1">Unique identifier of your SaaS tenant.</p>
               </div>
@@ -241,17 +273,21 @@ export const ConnectionForm: React.FC = () => {
                 <label className="block text-xs font-medium text-slate-300 mb-1.5">
                   Channel <span className="text-rose-400">*</span>
                 </label>
-                <select
+                <Select
                   disabled={isEdit}
                   value={channel}
-                  onChange={(e) => setChannel(e.target.value as Channel)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:border-indigo-500 outline-none cursor-pointer disabled:opacity-60"
+                  onValueChange={(val) => setChannel(val as Channel)}
                 >
-                  <option value={Channel.WhatsApp}>WhatsApp</option>
-                  <option value={Channel.Email} disabled>Email (Coming soon)</option>
-                  <option value={Channel.Sms} disabled>SMS (Coming soon)</option>
-                  <option value={Channel.Push} disabled>Push (Coming soon)</option>
-                </select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={Channel.WhatsApp}>WhatsApp</SelectItem>
+                    <SelectItem value={Channel.Email} disabled>Email (Coming soon)</SelectItem>
+                    <SelectItem value={Channel.Sms} disabled>SMS (Coming soon)</SelectItem>
+                    <SelectItem value={Channel.Push} disabled>Push (Coming soon)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -260,31 +296,39 @@ export const ConnectionForm: React.FC = () => {
                 <label className="block text-xs font-medium text-slate-300 mb-1.5">
                   Provider <span className="text-rose-400">*</span>
                 </label>
-                <select
+                <Select
                   disabled={isEdit}
                   value={provider}
-                  onChange={(e) => setProvider(e.target.value as Provider)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:border-indigo-500 outline-none cursor-pointer disabled:opacity-60"
+                  onValueChange={(val) => setProvider(val as Provider)}
                 >
-                  <option value={Provider.Meta}>Meta (Cloud API)</option>
-                  <option value={Provider.Twilio} disabled>Twilio (Coming soon)</option>
-                  <option value={Provider.SendGrid} disabled>SendGrid (Coming soon)</option>
-                </select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={Provider.Meta}>Meta (Cloud API)</SelectItem>
+                    <SelectItem value={Provider.Twilio} disabled>Twilio (Coming soon)</SelectItem>
+                    <SelectItem value={Provider.SendGrid} disabled>SendGrid (Coming soon)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1.5">
                   Auth Method <span className="text-rose-400">*</span>
                 </label>
-                <select
+                <Select
                   disabled={isEdit}
                   value={authMethod}
-                  onChange={(e) => setAuthMethod(e.target.value as AuthMethod)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:border-indigo-500 outline-none cursor-pointer disabled:opacity-60"
+                  onValueChange={(val) => setAuthMethod(val as AuthMethod)}
                 >
-                  <option value={AuthMethod.Manual}>Manual Credentials</option>
-                  <option value={AuthMethod.EmbeddedSignup}>Embedded Signup (Meta)</option>
-                </select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={AuthMethod.Manual}>Manual Credentials</SelectItem>
+                    <SelectItem value={AuthMethod.EmbeddedSignup}>Embedded Signup (Meta)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -346,7 +390,7 @@ export const ConnectionForm: React.FC = () => {
                   value={wabaId}
                   onChange={(e) => setWabaId(e.target.value)}
                   placeholder="e.g. 123456789012345"
-                  className="w-full font-mono bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+                  className="w-full font-mono bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
                 />
               </div>
 
@@ -360,7 +404,7 @@ export const ConnectionForm: React.FC = () => {
                   value={phoneNumberId}
                   onChange={(e) => setPhoneNumberId(e.target.value)}
                   placeholder="e.g. 987654321098765"
-                  className="w-full font-mono bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+                  className="w-full font-mono bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
                 />
               </div>
             </div>

@@ -21,6 +21,7 @@ import {
 import { StatusBadge } from '../../components/ui/StatusBadge';
 import { JsonViewer } from '../../components/ui/JsonViewer';
 import { TableSkeleton } from '../../components/ui/Skeleton';
+import { TenantDisplay } from '../../components/ui/TenantDisplay';
 import { Button } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
 import { formatDate, formatRelativeTime, copyToClipboard } from '../../lib/utils';
@@ -145,40 +146,42 @@ export const NotificationDetail: React.FC = () => {
         </div>
 
         {/* 6-Column Metadata Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 text-xs">
-          <div>
-            <span className="text-slate-500 block mb-0.5">Tenant ID</span>
-            <span className="font-mono font-semibold text-indigo-300">
-              {notification.tenant_id}
-            </span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 p-4 rounded-xl bg-slate-950/70 border border-slate-800/80 text-xs min-w-0">
+          <div className="min-w-0">
+            <span className="text-slate-500 block mb-0.5 text-[11px]">Tenant</span>
+            <TenantDisplay
+              tenantId={notification.tenant_id}
+              tenantName={notification.tenant_name}
+              size="sm"
+            />
           </div>
 
-          <div>
-            <span className="text-slate-500 block mb-0.5">Event Key</span>
-            <span className="font-mono font-semibold text-slate-200">
+          <div className="min-w-0">
+            <span className="text-slate-500 block mb-0.5 text-[11px]">Event Key</span>
+            <span className="font-mono font-semibold text-slate-200 block break-all">
               {notification.event}
             </span>
           </div>
 
-          <div>
-            <span className="text-slate-500 block mb-0.5">Recipient</span>
-            <span className="font-mono font-semibold text-slate-200">
+          <div className="min-w-0">
+            <span className="text-slate-500 block mb-0.5 text-[11px]">Recipient</span>
+            <span className="font-mono font-semibold text-slate-200 block break-all">
               {notification.recipient}
             </span>
           </div>
 
-          <div>
-            <span className="text-slate-500 block mb-0.5">Provider</span>
-            <span className="font-semibold capitalize text-slate-200">
+          <div className="min-w-0">
+            <span className="text-slate-500 block mb-0.5 text-[11px]">Provider</span>
+            <span className="font-semibold capitalize text-slate-200 block">
               {notification.provider || 'meta'}
             </span>
           </div>
 
-          <div className="sm:col-span-2">
-            <span className="text-slate-500 block mb-0.5">Provider Message ID</span>
+          <div className="sm:col-span-2 min-w-0">
+            <span className="text-slate-500 block mb-0.5 text-[11px]">Provider Message ID</span>
             {notification.provider_message_id ? (
-              <div className="flex items-center gap-1.5 font-mono text-emerald-400 truncate">
-                <span className="truncate">{notification.provider_message_id}</span>
+              <div className="flex items-center gap-1.5 font-mono text-emerald-400 min-w-0">
+                <span className="break-all">{notification.provider_message_id}</span>
                 <button
                   type="button"
                   onClick={() => handleCopy(notification.provider_message_id!, 'provider_id')}
@@ -224,47 +227,82 @@ export const NotificationDetail: React.FC = () => {
               No additional attempt logs recorded.
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-300 divide-y divide-slate-800/80">
-                <thead className="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
-                  <tr>
-                    <th className="py-3.5 px-4"># Attempt</th>
-                    <th className="py-3.5 px-4">Timestamp</th>
-                    <th className="py-3.5 px-4">Status</th>
-                    <th className="py-3.5 px-4">Error Code</th>
-                    <th className="py-3.5 px-4">Response Details</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/50">
-                  {attempts.map((attempt) => (
-                    <tr key={attempt.id} className="hover:bg-slate-800/30 transition-colors">
-                      <td className="py-3.5 px-4 font-mono font-semibold text-slate-200">
-                        #{attempt.attempt_number}
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-400">
-                        {formatDate(attempt.created_at)}
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <StatusBadge status={attempt.status} type="notification" />
-                      </td>
-                      <td className="py-3.5 px-4 font-mono text-slate-400">
-                        {attempt.error_code || '—'}
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-300 font-mono text-[11px]">
-                        {attempt.error_message ? (
-                          <span className="text-rose-400">{attempt.error_message}</span>
-                        ) : (
-                          <span className="text-emerald-400 flex items-center gap-1">
-                            <Activity className="w-3 h-3" />
-                            <span>OK (Provider Accepted)</span>
-                          </span>
-                        )}
-                      </td>
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left text-xs text-slate-300 divide-y divide-slate-800/80">
+                  <thead className="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
+                    <tr>
+                      <th className="py-3.5 px-4"># Attempt</th>
+                      <th className="py-3.5 px-4">Timestamp</th>
+                      <th className="py-3.5 px-4">Status</th>
+                      <th className="py-3.5 px-4">Error Code</th>
+                      <th className="py-3.5 px-4">Response Details</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/50">
+                    {attempts.map((attempt) => (
+                      <tr key={attempt.id} className="hover:bg-slate-800/30 transition-colors">
+                        <td className="py-3.5 px-4 font-mono font-semibold text-slate-200">
+                          #{attempt.attempt_number}
+                        </td>
+                        <td className="py-3.5 px-4 text-slate-400">
+                          {formatDate(attempt.created_at)}
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <StatusBadge status={attempt.status} type="notification" />
+                        </td>
+                        <td className="py-3.5 px-4 font-mono text-slate-400">
+                          {attempt.error_code || '—'}
+                        </td>
+                        <td className="py-3.5 px-4 text-slate-300 font-mono text-[11px]">
+                          {attempt.error_message ? (
+                            <span className="text-rose-400">{attempt.error_message}</span>
+                          ) : (
+                            <span className="text-emerald-400 flex items-center gap-1">
+                              <Activity className="w-3 h-3" />
+                              <span>OK (Provider Accepted)</span>
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden divide-y divide-slate-800/80">
+                {attempts.map((attempt) => (
+                  <div key={attempt.id} className="p-4 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-xs font-bold text-slate-200">
+                        Attempt #{attempt.attempt_number}
+                      </span>
+                      <StatusBadge status={attempt.status} type="notification" />
+                    </div>
+
+                    <div className="text-xs text-slate-400">
+                      <span>{formatDate(attempt.created_at)}</span>
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-800/60 font-mono text-xs">
+                      {attempt.error_message ? (
+                        <div className="text-rose-400 bg-rose-500/10 p-2 rounded-lg border border-rose-500/20">
+                          <div className="font-semibold text-[11px] mb-0.5">{attempt.error_code || 'ERROR'}</div>
+                          <div>{attempt.error_message}</div>
+                        </div>
+                      ) : (
+                        <div className="text-emerald-400 flex items-center gap-1.5 text-[11px]">
+                          <Activity className="w-3.5 h-3.5" />
+                          <span>OK (Provider Accepted)</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </Card>
       </div>
