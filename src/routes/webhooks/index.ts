@@ -1,9 +1,40 @@
+import crypto from 'crypto';
 import { Router, Request, Response, NextFunction } from 'express';
 import { config } from '../../config/env';
 import { handleMetaWebhook } from '../../webhooks/handlers/whatsapp/meta.webhook.handler';
 import { logger } from '../../utils/logger';
 
 const router = Router();
+
+type WebhookRequest = Request & { rawBody?: Buffer };
+
+function verifyMetaSignature(req: WebhookRequest): boolean {
+  const appSecret = config.meta.appSecret;
+  if (!appSecret) {
+    logger.warn('META_APP_SECRET not configured — webhook signature verification skipped');
+    return true;
+  }
+
+  const signature = req.headers['x-hub-signature-256'] as string | undefined;
+  if (!signature) {
+    logger.warn('Meta webhook request missing X-Hub-Signature-256 header');
+    return false;
+  }
+
+  const rawBody = req.rawBody;
+  if (!rawBody) {
+    logger.warn('Meta webhook raw body unavailable for signature verification');
+    return false;
+  }
+
+  const expected = `sha256=${crypto.createHmac('sha256', appSecret).update(rawBody).digest('hex')}`;
+
+  try {
+    return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
+  } catch {
+    return false;
+  }
+}
 
 // ─── Meta/WhatsApp Webhook ────────────────────────────────────────────────────
 
@@ -23,7 +54,13 @@ router.get('/whatsapp/meta', (req: Request, res: Response) => {
 });
 
 // Webhook events (POST) — Meta sends status updates and incoming messages
-router.post('/whatsapp/meta', (req: Request, res: Response, next: NextFunction) => {
+router.post('/whatsapp/meta', (req: WebhookRequest, res: Response, next: NextFunction) => {
+  if (!verifyMetaSignature(req)) {
+    logger.warn('Meta webhook rejected — invalid signature');
+    res.sendStatus(401);
+    return;
+  }
+
   // Acknowledge immediately per Meta requirements (respond within 5s)
   res.sendStatus(200);
 

@@ -54,8 +54,9 @@ export function createApp(): express.Application {
   app.use(
     '/webhooks',
     express.raw({ type: 'application/json' }),
-    (req, _res, next) => {
+    (req: express.Request & { rawBody?: Buffer }, _res, next) => {
       if (Buffer.isBuffer(req.body)) {
+        req.rawBody = req.body;
         req.body = JSON.parse(req.body.toString());
       }
       next();
