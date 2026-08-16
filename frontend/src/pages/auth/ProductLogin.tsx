@@ -58,7 +58,7 @@ export const ProductLogin: React.FC = () => {
             Product User Sign In
           </h1>
           <p className="text-xs text-[#A2B29F] mt-1.5">
-            Authenticate using your 64-character Product API Key to access tenant connections & notification history.
+            Authenticate using your Product API Key to access tenant connections & notification history.
           </p>
         </div>
 
