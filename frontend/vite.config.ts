@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 5173,
       proxy: {
-        '/api': {
+        '/api/v1': {
           target: backendUrl,
           changeOrigin: true,
         },
@@ -30,6 +30,10 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
         },
       },
+    },
+    build: {
+      outDir: path.resolve(__dirname, '../public'),
+      emptyOutDir: true,
     },
   };
 });

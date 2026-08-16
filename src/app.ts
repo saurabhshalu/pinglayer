@@ -2,6 +2,8 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
+import path from 'path';
+import fs from 'fs';
 import { config } from './config/env';
 import { requestIdMiddleware } from './middleware/requestId';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
@@ -15,7 +17,21 @@ export function createApp(): express.Application {
   const app = express();
 
   // ─── Security ───────────────────────────────────────────────────────────────
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'"],
+          styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+          fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
+          imgSrc: ["'self'", 'data:', 'blob:'],
+          connectSrc: ["'self'"],
+        },
+      },
+      crossOriginEmbedderPolicy: false,
+    })
+  );
   app.use(cors());
   app.disable('x-powered-by');
 
@@ -56,10 +72,40 @@ export function createApp(): express.Application {
     res.json({ status: 'ok', service: 'pinglayer', version: '1.0.0' });
   });
 
-  // ─── Routes ──────────────────────────────────────────────────────────────────
+  // ─── API Routes ──────────────────────────────────────────────────────────────
   app.use('/api/v1', v1Router);
   app.use('/admin/api', adminRouter);
   app.use('/webhooks', webhookRouter);
+
+  // ─── Frontend Static Files & SPA Fallback ────────────────────────────────────
+  const candidatePaths = [
+    path.resolve(__dirname, '../public'),
+    path.resolve(process.cwd(), 'public'),
+    path.resolve(__dirname, '../frontend/dist'),
+    path.resolve(process.cwd(), 'frontend/dist'),
+  ];
+  const staticPath = candidatePaths.find((p) => fs.existsSync(p));
+
+  if (staticPath) {
+    logger.info('Serving frontend static files from', { path: staticPath });
+    app.use(express.static(staticPath));
+
+    // Handle SPA client-side routing for non-API routes
+    app.get('*', (req, res, next) => {
+      if (
+        req.path.startsWith('/api/') ||
+        req.path === '/api' ||
+        req.path.startsWith('/admin/api/') ||
+        req.path === '/admin/api' ||
+        req.path.startsWith('/webhooks/') ||
+        req.path === '/webhooks' ||
+        req.path === '/health'
+      ) {
+        return next();
+      }
+      res.sendFile(path.join(staticPath, 'index.html'));
+    });
+  }
 
   // ─── Error Handling ──────────────────────────────────────────────────────────
   app.use(notFoundHandler);

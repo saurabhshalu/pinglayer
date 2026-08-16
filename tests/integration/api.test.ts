@@ -24,19 +24,26 @@ describeWithDb('Integration: Health endpoint', () => {
   });
 });
 
-describe('Integration: Auth (unit-level)', () => {
+let hasSupertest = false;
+let supertest: any = null;
+try {
+  supertest = require('supertest');
+  hasSupertest = Boolean(supertest);
+} catch {
+  hasSupertest = false;
+}
+
+const describeWithSupertest = hasSupertest ? describe : describe.skip;
+
+describeWithSupertest('Integration: Auth (unit-level)', () => {
   it('returns 401 for missing Authorization header', async () => {
-    if (SKIP_DB) {
-      const supertest = require('supertest');
-      const { createApp } = require('../../src/app');
-      const testApp = createApp();
-      const res = await supertest(testApp).get('/api/v1/connections');
-      expect(res.status).toBe(401);
-    }
+    const { createApp } = require('../../src/app');
+    const testApp = createApp();
+    const res = await supertest(testApp).get('/api/v1/connections');
+    expect(res.status).toBe(401);
   });
 
   it('returns 401 for invalid API key', async () => {
-    const supertest = require('supertest');
     const { createApp } = require('../../src/app');
     const testApp = createApp();
     const res = await supertest(testApp)
@@ -46,7 +53,6 @@ describe('Integration: Auth (unit-level)', () => {
   });
 
   it('returns 404 for unknown route', async () => {
-    const supertest = require('supertest');
     const { createApp } = require('../../src/app');
     const testApp = createApp();
     const res = await supertest(testApp).get('/api/v1/nonexistent');
