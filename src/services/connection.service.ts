@@ -51,6 +51,16 @@ export async function createConnection(input: CreateConnectionInput): Promise<Co
   }
 
   const encrypted = encryptCredentials(input.credentials);
+
+  // phone_number_id is a non-sensitive lookup key — store it in config so
+  // the webhook handler can find the connection without decrypting credentials.
+  const config = {
+    ...input.config,
+    ...(input.credentials.phone_number_id
+      ? { phone_number_id: input.credentials.phone_number_id }
+      : {}),
+  };
+
   const connection = await connectionRepo.createConnection(
     {
       productId: input.productId,
@@ -59,7 +69,7 @@ export async function createConnection(input: CreateConnectionInput): Promise<Co
       channel: input.channel,
       provider: input.provider,
       authMethod: input.authMethod ?? AuthMethod.Manual,
-      config: input.config,
+      config,
     },
     encrypted
   );
@@ -136,8 +146,16 @@ export async function updateConnection(
   const updates: Partial<Pick<Connection, 'status' | 'config' | 'tenant_name'>> = {};
   if (input.status !== undefined) updates.status = input.status;
   if (input.tenantName !== undefined) updates.tenant_name = input.tenantName;
-  if (input.config !== undefined) {
-    updates.config = { ...(connection.config || {}), ...input.config };
+
+  // Mirror phone_number_id into config if it was updated in credentials
+  const newPhoneNumberId = input.credentials?.phone_number_id;
+  const configBase = input.config !== undefined
+    ? { ...(connection.config || {}), ...input.config }
+    : { ...(connection.config || {}) };
+  if (newPhoneNumberId) {
+    updates.config = { ...configBase, phone_number_id: newPhoneNumberId };
+  } else if (input.config !== undefined) {
+    updates.config = configBase;
   }
 
   if (Object.keys(updates).length > 0) {
