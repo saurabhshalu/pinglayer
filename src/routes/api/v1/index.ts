@@ -1,5 +1,7 @@
 import { Router } from 'express';
-import { authenticate } from '../../../middleware/auth';
+import rateLimit from 'express-rate-limit';
+import { authenticate, AuthenticatedRequest } from '../../../middleware/auth';
+import { config } from '../../../config/env';
 import * as notificationsController from '../../../controllers/v1/notifications.controller';
 import * as connectionsController from '../../../controllers/v1/connections.controller';
 import * as templatesController from '../../../controllers/v1/templates.controller';
@@ -8,6 +10,21 @@ const router = Router();
 
 // All v1 routes require product API key authentication
 router.use(authenticate);
+
+// Per-product rate limit — keyed by product id so tenants are fully isolated
+router.use(
+  rateLimit({
+    windowMs: config.rateLimit.windowMs,
+    max: config.rateLimit.maxRequests,
+    keyGenerator: (req) => (req as AuthenticatedRequest).product.id,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+      success: false,
+      error: { code: 'RATE_LIMITED', message: 'Too many requests, please try again later' },
+    },
+  })
+);
 
 // ─── Notifications ────────────────────────────────────────────────────────────
 router.post('/notifications/send', notificationsController.send);

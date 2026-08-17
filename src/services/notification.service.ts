@@ -15,6 +15,7 @@ import { AppError } from '../utils/errors';
 import { ErrorCodes } from '../types';
 import { buildPaginatedResult } from '../utils/pagination';
 import { logger } from '../utils/logger';
+import { queryOne } from '../db/pool';
 
 export interface SendNotificationInput {
   productId: string;
@@ -50,6 +51,45 @@ export async function sendNotification(
   const connection = await connectionRepo.findById(connectionId);
   if (!connection) {
     throw new AppError(ErrorCodes.CONNECTION_NOT_FOUND, 'Connection not found', 500);
+  }
+
+  // 2a. Check if recipient has opted out for this tenant + channel
+  const optOut = await queryOne<{ id: string }>(
+    `SELECT id FROM opt_outs
+     WHERE product_id = ? AND tenant_id = ? AND channel = ? AND recipient = ? LIMIT 1`,
+    [input.productId, input.tenantId, channel, input.recipient]
+  );
+  if (optOut) {
+    logger.info('Notification skipped — recipient opted out', {
+      productId: input.productId,
+      tenantId: input.tenantId,
+      channel,
+      recipient: input.recipient,
+      event: input.event,
+    });
+    const notification = await notificationRepo.createNotification({
+      productId: input.productId,
+      tenantId: input.tenantId,
+      connectionId,
+      channel: connection.channel,
+      provider: connection.provider,
+      event: input.event,
+      recipient: input.recipient,
+      requestMetadata: { event: input.event, definitionId: definition.id, mappingId: mapping.id },
+    });
+    await notificationRepo.updateStatus(notification.id, NotificationStatus.OptedOut, {
+      errorCode: ErrorCodes.RECIPIENT_OPTED_OUT,
+      errorMessage: 'Recipient has opted out of notifications on this channel',
+    });
+    return {
+      notificationId: notification.id,
+      status: NotificationStatus.OptedOut,
+      channel: connection.channel,
+      error: {
+        code: ErrorCodes.RECIPIENT_OPTED_OUT,
+        message: 'Recipient has opted out of notifications on this channel',
+      },
+    };
   }
 
   // 3. Validate and resolve template variables

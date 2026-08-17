@@ -1,5 +1,7 @@
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import { adminAuthenticate } from '../../middleware/adminAuth';
+import { config } from '../../config/env';
 import * as productsController from '../../controllers/admin/products.controller';
 import * as connectionsController from '../../controllers/admin/connections.controller';
 import * as notificationsController from '../../controllers/admin/notifications.controller';
@@ -7,6 +9,20 @@ import * as notificationsController from '../../controllers/admin/notifications.
 const router = Router();
 
 router.use(adminAuthenticate);
+
+// Strict IP-based limit for the admin panel — it's human-facing and low volume
+router.use(
+  rateLimit({
+    windowMs: config.rateLimit.windowMs,
+    max: config.rateLimit.adminMaxRequests,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+      success: false,
+      error: { code: 'RATE_LIMITED', message: 'Too many requests, please try again later' },
+    },
+  })
+);
 
 // ─── Products ─────────────────────────────────────────────────────────────────
 router.post('/products', productsController.create);

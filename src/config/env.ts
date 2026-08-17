@@ -50,7 +50,10 @@ export const config = {
 
   rateLimit: {
     windowMs: optionalNumber('RATE_LIMIT_WINDOW_MS', 60_000),
-    maxRequests: optionalNumber('RATE_LIMIT_MAX_REQUESTS', 100),
+    // per-product limit on /api/v1 (keyed by product id, not IP)
+    maxRequests: optionalNumber('RATE_LIMIT_MAX_REQUESTS', 300),
+    // per-IP limit on /admin (stricter, human-facing)
+    adminMaxRequests: optionalNumber('RATE_LIMIT_ADMIN_MAX_REQUESTS', 60),
   },
 
   logging: {

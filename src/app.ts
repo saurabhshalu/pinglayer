@@ -1,7 +1,6 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
-import rateLimit from 'express-rate-limit';
 import path from 'path';
 import fs from 'fs';
 import { config } from './config/env';
@@ -34,20 +33,6 @@ export function createApp(): express.Application {
   );
   app.use(cors());
   app.disable('x-powered-by');
-
-  // ─── Rate Limiting ───────────────────────────────────────────────────────────
-  app.use(
-    rateLimit({
-      windowMs: config.rateLimit.windowMs,
-      max: config.rateLimit.maxRequests,
-      standardHeaders: true,
-      legacyHeaders: false,
-      message: {
-        success: false,
-        error: { code: 'RATE_LIMITED', message: 'Too many requests, please try again later' },
-      },
-    })
-  );
 
   // ─── Request Parsing ─────────────────────────────────────────────────────────
   // Raw body for webhook signature verification

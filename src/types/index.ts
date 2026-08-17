@@ -35,6 +35,7 @@ export enum NotificationStatus {
   Delivered = 'delivered',
   Read = 'read',
   Failed = 'failed',
+  OptedOut = 'opted_out',
 }
 
 export enum Channel {
@@ -270,6 +271,9 @@ export const ErrorCodes = {
   PROVIDER_RATE_LIMITED: 'PROVIDER_RATE_LIMITED',
   PROVIDER_UNAVAILABLE: 'PROVIDER_UNAVAILABLE',
   MESSAGE_SEND_FAILED: 'MESSAGE_SEND_FAILED',
+
+  // Opt-out
+  RECIPIENT_OPTED_OUT: 'RECIPIENT_OPTED_OUT',
 
   // General
   INTERNAL_ERROR: 'INTERNAL_ERROR',
