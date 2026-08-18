@@ -142,15 +142,38 @@ export async function sendNotification(
   }
 
   // 7. Build components for WhatsApp template
-  // Position-based variables map to body component parameters
-  const components = Object.keys(mapping.variable_mapping).length > 0
-    ? [{
-        type: 'body',
-        parameters: Object.entries(resolvedVariables)
-          .sort(([a], [b]) => parseInt(a) - parseInt(b))
-          .map(([, text]) => ({ type: 'text', text })),
-      }]
-    : [];
+  // Numeric keys (e.g. '1', '2') → body component parameters
+  // button_{buttonIndex}_{varIndex} keys → button URL components
+  const bodyParams = Object.entries(resolvedVariables)
+    .filter(([key]) => /^\d+$/.test(key))
+    .sort(([a], [b]) => parseInt(a) - parseInt(b))
+    .map(([, text]) => ({ type: 'text', text }));
+
+  const buttonMap = new Map<number, Array<{ varIndex: number; text: string }>>();
+  for (const [key, text] of Object.entries(resolvedVariables)) {
+    const match = key.match(/^button_(\d+)_(\d+)$/);
+    if (match) {
+      const buttonIndex = parseInt(match[1]);
+      const varIndex = parseInt(match[2]);
+      if (!buttonMap.has(buttonIndex)) buttonMap.set(buttonIndex, []);
+      buttonMap.get(buttonIndex)!.push({ varIndex, text });
+    }
+  }
+  const buttonComponents = [...buttonMap.entries()]
+    .sort(([a], [b]) => a - b)
+    .map(([buttonIndex, vars]) => ({
+      type: 'button',
+      sub_type: 'url',
+      index: String(buttonIndex),
+      parameters: vars
+        .sort((a, b) => a.varIndex - b.varIndex)
+        .map(({ text }) => ({ type: 'text', text })),
+    }));
+
+  const components = [
+    ...(bodyParams.length > 0 ? [{ type: 'body', parameters: bodyParams }] : []),
+    ...buttonComponents,
+  ];
 
   // 8. Send through provider
   const sendResult = await provider.send(
